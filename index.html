@@ -1,0 +1,1342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>4ocean Corporate Gifting — Custom Bracelet</title>
+<style>
+:root {
+  --blue: #0057B8;
+  --teal: #007D8A;
+  --ink: #111;
+  --muted: #666;
+  --border: #e5edf0;
+  --soft: #f4f7f8;
+  --panel: #ffffff;
+  --radius: 28px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color: var(--ink); }
+
+/* ── Flow header ── */
+.flow-header {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+.flow-header-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; align-items: center; gap: 0;
+  height: 64px;
+}
+/* Step pills */
+.step-nav {
+  display: flex; align-items: center; flex: 1; gap: 0;
+  overflow-x: auto; scrollbar-width: none;
+}
+.step-nav::-webkit-scrollbar { display: none; }
+.step-pill {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px; border-radius: 999px;
+  cursor: pointer; white-space: nowrap;
+  transition: background .15s;
+  position: relative; flex-shrink: 0;
+}
+.step-pill:not(:last-child)::after {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--border);
+  display: block; flex-shrink: 0;
+}
+.step-pill-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 900;
+  background: var(--border); color: var(--muted);
+  transition: background .2s, color .2s; flex-shrink: 0;
+}
+.step-pill-label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.step-pill.active .step-pill-num { background: var(--blue); color: #fff; }
+.step-pill.active .step-pill-label { color: var(--ink); }
+.step-pill.done .step-pill-num { background: #00843D; color: #fff; }
+.step-pill.done .step-pill-label { color: var(--ink); }
+
+/* Summary bar (right of header) */
+.flow-summary-pill {
+  margin-left: auto; flex-shrink: 0;
+  display: flex; align-items: center; gap: 12px;
+  background: var(--soft); border: 1px solid var(--border);
+  border-radius: 999px; padding: 8px 16px;
+  font-size: 13px;
+}
+.sum-chip {
+  display: flex; align-items: center; gap: 6px;
+  font-weight: 700; color: var(--ink);
+}
+.sum-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,.15); flex-shrink: 0;
+}
+.sum-divider { width: 1px; height: 18px; background: var(--border); }
+
+/* ── Page body ── */
+.flow-body { max-width: 1280px; margin: 0 auto; padding: 32px 24px 80px; }
+
+/* ── Hero (shown only on step 1) ── */
+.flow-hero { margin-bottom: 32px; }
+.flow-hero-eyebrow {
+  font-size: 11px; font-weight: 800; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--teal); margin-bottom: 8px;
+}
+.flow-hero-title {
+  font-size: clamp(32px, 5vw, 60px);
+  font-weight: 900; line-height: .92; letter-spacing: -.05em;
+  text-transform: uppercase; margin-bottom: 14px;
+}
+.flow-hero-title em { font-style: normal; color: var(--blue); }
+.flow-hero-sub { font-size: 16px; color: var(--muted); max-width: 580px; line-height: 1.55; }
+
+/* ── Step sections ── */
+.step-section { display: none; }
+.step-section.active { display: block; }
+
+/* ── Step card wrapper (matches original config-card) ── */
+.step-card {
+  background: var(--panel);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 60px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+.step-card-header {
+  padding: 34px 34px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+}
+.step-card-eyebrow {
+  font-size: 11px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--teal); margin-bottom: 8px;
+}
+.step-card-title {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 900; line-height: .94; letter-spacing: -.04em;
+  text-transform: uppercase;
+}
+.step-card-title em { font-style: normal; color: var(--blue); }
+.step-card-sub {
+  margin-top: 12px; max-width: 640px;
+  color: var(--muted); font-size: 15px; line-height: 1.5;
+}
+.skip-link {
+  flex-shrink: 0; margin-top: 4px;
+  background: none; border: 1px solid var(--border);
+  border-radius: 999px; padding: 8px 18px;
+  font-size: 13px; font-weight: 700; color: var(--muted);
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.skip-link:hover { border-color: var(--blue); color: var(--blue); background: #eef5ff; }
+
+/* ── Nav row (bottom of each step) ── */
+.step-nav-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 34px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+.back-btn {
+  background: none; border: 1px solid var(--border);
+  border-radius: 999px; padding: 12px 24px;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  color: var(--muted); transition: all .15s;
+}
+.back-btn:hover { border-color: var(--ink); color: var(--ink); }
+.next-btn {
+  background: var(--blue); color: #fff;
+  border: none; border-radius: 999px; padding: 14px 32px;
+  font-size: 14px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: .04em; cursor: pointer; transition: opacity .15s, transform .15s;
+}
+.next-btn:hover { opacity: .88; transform: translateY(-1px); }
+.next-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+/* ── Skipped state ── */
+.skipped-note {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 34px;
+  background: #f9fafb; border-top: 1px solid var(--border);
+}
+.undo-skip {
+  background: none; border: 1px solid var(--border);
+  border-radius: 999px; padding: 7px 16px;
+  font-size: 13px; font-weight: 700; color: var(--blue);
+  cursor: pointer; transition: background .15s;
+}
+.undo-skip:hover { background: #eef5ff; }
+
+/* ── Step 4: Order summary ── */
+.order-layout { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
+@media (max-width: 900px) { .order-layout { grid-template-columns: 1fr; } }
+
+.order-summary-card {
+  background: var(--panel);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 60px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+.order-summary-head {
+  background: var(--ink); color: #fff; padding: 24px 28px 20px;
+}
+.order-summary-head h3 { font-size: 20px; font-weight: 900; letter-spacing: -.02em; }
+.order-summary-head p { font-size: 13px; color: rgba(255,255,255,.55); margin-top: 4px; }
+.order-rows { padding: 20px 28px; display: flex; flex-direction: column; gap: 2px; }
+.order-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 0; border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.order-row:last-child { border-bottom: none; }
+.order-key { color: var(--muted); font-weight: 600; }
+.order-val { font-weight: 800; display: flex; align-items: center; gap: 7px; }
+.order-val.empty { color: #ccc; font-weight: 400; font-style: italic; }
+.order-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,.13); flex-shrink: 0;
+}
+
+/* Qty control */
+.qty-block { padding: 16px 28px 0; }
+.qty-label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
+.qty-control {
+  display: flex; align-items: center;
+  border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+  background: var(--soft);
+}
+.qty-btn {
+  width: 52px; height: 52px; border: none; background: none;
+  font-size: 22px; font-weight: 300; cursor: pointer; color: var(--ink);
+  transition: background .12s; flex-shrink: 0;
+}
+.qty-btn:hover { background: #e8eef3; }
+.qty-num {
+  flex: 1; text-align: center; font-size: 22px; font-weight: 900;
+  letter-spacing: -.03em;
+}
+.qty-min { font-size: 11px; color: var(--muted); padding: 10px 28px 0; }
+
+/* CTA block */
+.cta-block { padding: 20px 28px 28px; display: flex; flex-direction: column; gap: 10px; }
+.cta-primary {
+  width: 100%; border: none; border-radius: 999px; padding: 17px;
+  font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: .05em;
+  background: var(--blue); color: #fff; cursor: pointer; transition: opacity .15s, transform .15s;
+}
+.cta-primary:hover { opacity: .88; transform: translateY(-1px); }
+.cta-divider { text-align: center; font-size: 11px; font-weight: 800; color: #bbb; letter-spacing: .08em; }
+.cta-secondary {
+  width: 100%; border: 2px solid var(--blue); border-radius: 999px; padding: 15px;
+  font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: .05em;
+  background: none; color: var(--blue); cursor: pointer; transition: background .15s;
+}
+.cta-secondary:hover { background: #eef5ff; }
+.cta-note { text-align: center; font-size: 12px; color: var(--muted); }
+
+/* Left recap panel */
+.order-recap {
+  background: var(--panel);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 60px rgba(0,0,0,.08);
+  padding: 32px;
+}
+.recap-title {
+  font-size: 13px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 20px;
+}
+.recap-step {
+  display: flex; gap: 18px; padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+.recap-step:last-child { border-bottom: none; }
+.recap-step-num {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900;
+  background: var(--blue); color: #fff;
+}
+.recap-step.skipped .recap-step-num { background: #ddd; color: #999; }
+.recap-step-body { flex: 1; }
+.recap-step-name { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+.recap-step-detail { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.recap-edit {
+  background: none; border: none; cursor: pointer;
+  font-size: 12px; font-weight: 700; color: var(--blue);
+  padding: 0; margin-top: 6px; display: inline-block;
+}
+.recap-edit:hover { text-decoration: underline; }
+
+/* ── Quote modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,.52);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .22s ease;
+}
+.modal-overlay.is-open { opacity: 1; pointer-events: all; }
+.modal-card {
+  background: #fff; border-radius: 24px; padding: 32px;
+  width: calc(100vw - 40px); max-width: 540px;
+  max-height: 92vh; overflow-y: auto;
+  position: relative;
+  box-shadow: 0 24px 80px rgba(0,0,0,.22);
+  transform: translateY(16px); transition: transform .22s ease;
+}
+.modal-overlay.is-open .modal-card { transform: translateY(0); }
+.modal-close {
+  position: absolute; top: 16px; right: 20px;
+  border: none; background: none; font-size: 20px;
+  cursor: pointer; color: var(--muted);
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: var(--soft); }
+.modal-title { font-size: 24px; font-weight: 900; letter-spacing: -.03em; margin-bottom: 4px; }
+.modal-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+
+/* Modal bracelet snapshot */
+.modal-snapshot {
+  background: #0d1b2a; border-radius: 14px; overflow: hidden;
+  height: 180px; margin-bottom: 22px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-snapshot-chips {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px;
+}
+.ms-chip {
+  background: rgba(255,255,255,.15); backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,.22); border-radius: 999px;
+  padding: 4px 12px; font-size: 11px; color: #fff;
+  display: flex; align-items: center; gap: 5px;
+}
+.ms-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+.mf-row { margin-bottom: 14px; }
+.mf-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.mf-label { display: block; font-size: 12px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+.mf-input {
+  width: 100%; border: 1px solid var(--border); border-radius: 10px;
+  padding: 11px 13px; font-size: 14px; font-family: inherit;
+  outline: none; transition: border-color .15s;
+}
+.mf-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,87,184,.1); }
+.mf-textarea { resize: vertical; min-height: 72px; }
+
+.modal-submit {
+  width: 100%; border: none; border-radius: 999px; padding: 15px;
+  font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: .04em;
+  background: var(--blue); color: #fff; cursor: pointer; margin-top: 6px;
+  transition: opacity .15s;
+}
+.modal-submit:hover { opacity: .88; }
+
+.modal-success {
+  text-align: center; padding: 30px 0;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.success-ring {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: #e6f9f0; display: flex; align-items: center; justify-content: center;
+  font-size: 30px; color: #00843D;
+}
+.modal-success h3 { font-size: 22px; font-weight: 900; letter-spacing: -.02em; }
+.modal-success p { color: var(--muted); font-size: 14px; max-width: 340px; }
+
+@media (max-width: 640px) {
+  .flow-header { padding: 0 16px; }
+  .flow-logo { margin-right: 16px; font-size: 15px; }
+  .flow-summary-pill { display: none; }
+  .step-card-header { flex-direction: column; }
+  .flow-body { padding: 20px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── STICKY HEADER ── -->
+<header class="flow-header">
+  <div class="flow-header-inner">
+    <nav class="step-nav" id="step-nav">
+      <div class="step-pill active" data-step="1" onclick="goToStep(1)">
+        <div class="step-pill-num">1</div>
+        <div class="step-pill-label">Bracelet</div>
+      </div>
+      <div style="width:28px;height:1px;background:var(--border);flex-shrink:0"></div>
+      <div class="step-pill" data-step="2" onclick="goToStep(2)">
+        <div class="step-pill-num">2</div>
+        <div class="step-pill-label">Charm</div>
+      </div>
+      <div style="width:28px;height:1px;background:var(--border);flex-shrink:0"></div>
+      <div class="step-pill" data-step="3" onclick="goToStep(3)">
+        <div class="step-pill-num">3</div>
+        <div class="step-pill-label">Package</div>
+      </div>
+      <div style="width:28px;height:1px;background:var(--border);flex-shrink:0"></div>
+      <div class="step-pill" data-step="4" onclick="goToStep(4)">
+        <div class="step-pill-num">4</div>
+        <div class="step-pill-label">Order</div>
+      </div>
+    </nav>
+    <div class="flow-summary-pill" id="header-summary">
+      <div class="sum-chip">
+        <div class="sum-dot" id="hsum-dot1" style="background:#74D1EA"></div>
+        <span id="hsum-s1">Sky Blue</span>
+      </div>
+      <div class="sum-divider"></div>
+      <div class="sum-chip">
+        <div class="sum-dot" id="hsum-dot2" style="background:#E8B3C3"></div>
+        <span id="hsum-s2">Rose Quartz</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="flow-body">
+
+<!-- ════════════════════════════════════════════════════ -->
+<!-- STEP 1: BRACELET — injected directly from configurator_final.html -->
+<!-- We iframe it so the full polished tool runs as-is  -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="step-section active" id="step-1">
+  <div class="flow-hero">
+    <p class="flow-hero-eyebrow">Corporate Gifting — Step 1 of 4</p>
+    <h1 class="flow-hero-title"><em>Choose your</em><br>bracelet.</h1>
+    <p class="flow-hero-sub">Pick two cord colors and your bracelet style. The 3D preview updates live as you choose.</p>
+  </div>
+  <iframe
+    id="bracelet-iframe"
+    src="SHOPIFY_BRACELET_PAGE_URL"
+    style="width:100%;border:none;border-radius:28px;box-shadow:0 18px 60px rgba(0,0,0,.08);height:1100px;display:block"
+    scrolling="no"
+    onload="syncIframeHeight(this)"
+  ></iframe>
+  <style>
+    /* Injected into parent — hides standalone quote CTA inside the iframe via postMessage trick below */
+  </style>
+  <div id="server-warning" style="display:none;background:#fff8e8;border:1px solid #f0c860;border-radius:14px;padding:16px 20px;margin-top:12px;font-size:14px;color:#7a5500">
+    ⚠ <strong>Local server not running.</strong> Start it with: <code style="background:#f4eed8;padding:2px 8px;border-radius:4px;font-size:13px">cd ~/Downloads/bracelet_parts && python3 -m http.server 8765</code> — then refresh this page.
+  </div>
+  <div class="step-nav-row">
+    <div></div>
+    <button class="next-btn" onclick="goToStep(2)">Next: Engrave your logo →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!-- STEP 2: CHARM ENGRAVER                              -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="step-section" id="step-2">
+  <div class="step-card" id="charm-card">
+    <div class="step-card-header">
+      <div>
+        <p class="step-card-eyebrow">Corporate Gifting — Step 2 of 4</p>
+        <h2 class="step-card-title"><em>Engrave your logo.</em><br>Preview it on the charm.</h2>
+        <p class="step-card-sub">Upload your brand mark and see it laser-engraved on the silver charm in real time. Your original file is sent to our team for production.</p>
+      </div>
+      <button class="skip-link" onclick="skipStep(2)">Skip this step →</button>
+    </div>
+
+    <!-- Charm body -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:30px;align-items:start" id="charm-body">
+      <!-- Stage -->
+      <div id="charm-stage" style="position:relative;background:#0d1b2a;border-radius:18px;overflow:hidden;min-height:400px">
+        <div id="charm-3d-mount" style="width:100%;height:400px"></div>
+      </div>
+
+      <!-- Controls -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <!-- Upload -->
+        <div id="charm-upload-zone"
+          style="border:2px dashed var(--border);border-radius:18px;padding:36px 24px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s"
+          onclick="document.getElementById('charm-file').click()"
+          ondragover="event.preventDefault();this.style.borderColor='var(--blue)'"
+          ondragleave="this.style.borderColor=''"
+          ondrop="handleCharmDrop(event)">
+          <div style="font-size:40px;margin-bottom:12px">⬆</div>
+          <div style="font-size:16px;font-weight:800;margin-bottom:6px">Upload your logo</div>
+          <div style="font-size:14px;color:var(--muted)">PNG or SVG with transparency works best<br>Drag &amp; drop or click to browse</div>
+        </div>
+        <input type="file" id="charm-file" accept="image/png,image/jpeg,image/svg+xml,image/webp" name="properties[_Charm Logo]" style="display:none">
+
+        <!-- File chip (hidden until uploaded) -->
+        <div id="charm-chip" style="display:none;align-items:center;gap:12px;background:var(--soft);border:1px solid var(--border);border-radius:14px;padding:14px 18px">
+          <div style="width:36px;height:36px;border-radius:10px;background:#e6f9f0;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">✓</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:800;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="charm-chip-name">logo.png</div>
+            <div style="font-size:12px;color:var(--muted)">Ready for engraving</div>
+          </div>
+          <button onclick="removeCharmLogo()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);padding:4px">×</button>
+        </div>
+
+        <!-- Size slider -->
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Logo size</span>
+            <span style="font-size:13px;font-weight:800" id="charm-size-val">55%</span>
+          </div>
+          <input type="range" id="charm-size" min="20" max="85" value="55" step="1"
+            style="width:100%;accent-color:var(--blue)" oninput="redrawCharm();document.getElementById('charm-size-val').textContent=this.value+'%'">
+        </div>
+
+        <div style="background:var(--soft);border-radius:14px;padding:16px 18px">
+          <div style="font-size:13px;font-weight:800;margin-bottom:6px">About the engraving</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.55;margin:0">
+            Preview is a visual guide. Clean single-color logos and line art engrave best.
+            Our team engraves from your original file — not the preview screenshot.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skipped state (hidden by default) -->
+    <div id="charm-skipped" style="display:none" class="skipped-note">
+      <span style="font-size:14px;color:var(--muted)">Step skipped — bracelet will use standard charm, no engraving</span>
+      <button class="undo-skip" onclick="unskipStep(2)">Add charm engraving</button>
+    </div>
+  </div>
+
+  <div class="step-nav-row">
+    <button class="back-btn" onclick="goToStep(1)">← Back</button>
+    <button class="next-btn" onclick="goToStep(3)">Next: Design packaging →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!-- STEP 3: PACKAGE DESIGNER                            -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="step-section" id="step-3">
+  <div class="step-card" id="pkg-card">
+    <div class="step-card-header">
+      <div>
+        <p class="step-card-eyebrow">Corporate Gifting — Step 3 of 4</p>
+        <h2 class="step-card-title"><em>Design your</em><br>custom packaging.</h2>
+        <p class="step-card-sub">Upload your brand artwork to show through the transparent window of the bracelet card. Drag to reposition. Your full-resolution file goes to our print team.</p>
+      </div>
+      <button class="skip-link" onclick="skipStep(3)">Skip this step →</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:30px;align-items:start" id="pkg-body">
+
+      <!-- Card preview stage -->
+      <div>
+        <div style="position:relative" id="pkg-flip-wrap">
+          <div id="pkg-flip-inner" style="position:relative;transition:transform .6s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d;perspective:1200px">
+            <!-- Front face -->
+            <div id="pkg-front-face" style="-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:18px;overflow:hidden;background:#f9f9f9;border:1px solid var(--border)">
+              <canvas id="pkg-canvas" style="width:100%;display:block"></canvas>
+            </div>
+            <!-- Back face -->
+            <div id="pkg-back-face" style="position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;transform:rotateY(180deg);border-radius:18px;overflow:hidden;background:#f9f9f9;border:1px solid var(--border)">
+              <img id="pkg-back-img" style="width:100%;display:block" src="" alt="Back of package">
+              <div id="pkg-back-ph" style="padding:60px 30px;text-align:center;color:#bbb;font-size:14px;line-height:1.5">Back-of-card image will appear here once configured in section settings</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;margin-top:14px">
+          <button id="pkg-flip-btn" onclick="flipPkg()"
+            style="background:#fff;border:1px solid var(--border);border-radius:999px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;color:var(--muted);transition:all .15s">
+            View back of package
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <button id="pkg-upload-btn" onclick="document.getElementById('pkg-file').click()"
+          style="width:100%;border:none;border-radius:999px;padding:16px;font-size:15px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;background:var(--blue);color:#fff;cursor:pointer;transition:opacity .15s">
+          Upload your graphic
+        </button>
+        <input type="file" id="pkg-file" accept="image/png,image/jpeg,image/webp" name="properties[_Package Art]" style="display:none">
+
+        <!-- Scale (hidden until image uploaded) -->
+        <div id="pkg-scale-row" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Scale</span>
+            <span style="font-size:13px;font-weight:800" id="pkg-scale-val">100%</span>
+          </div>
+          <input type="range" id="pkg-scale" min="40" max="220" value="100" step="1"
+            style="width:100%;accent-color:var(--blue)"
+            oninput="updatePkgScale(this.value);document.getElementById('pkg-scale-val').textContent=this.value+'%'">
+        </div>
+
+        <!-- Actions (hidden until image uploaded) -->
+        <div id="pkg-actions" style="display:none;gap:10px">
+          <button onclick="pkgRecenter()"
+            style="flex:1;padding:11px;border-radius:14px;border:1px solid var(--border);background:var(--soft);font-size:13px;font-weight:700;cursor:pointer;transition:background .15s">
+            Re-center
+          </button>
+          <button onclick="pkgRemove()"
+            style="flex:1;padding:11px;border-radius:14px;border:1px solid var(--border);background:var(--soft);font-size:13px;font-weight:700;cursor:pointer;transition:background .15s">
+            Remove
+          </button>
+        </div>
+
+        <p id="pkg-status" style="font-size:13px;color:var(--blue);min-height:1em"></p>
+
+        <div style="background:var(--soft);border-radius:14px;padding:16px 18px">
+          <div style="font-size:13px;font-weight:800;margin-bottom:6px">How it works</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.55;margin:0">
+            Drag your image to reposition it inside the frame. Scale to fit. The 4ocean logo and card template stay locked in place.
+            Your full-resolution file is sent to our print team — not the preview.
+          </p>
+        </div>
+
+        <!-- Cloudinary status note -->
+        <p id="pkg-storage-note" style="font-size:12px;color:#f0a500;display:none">
+          ⚠ File storage not configured yet. Preview works but files won't be saved to your order until Cloudinary is set up.
+        </p>
+      </div>
+    </div>
+
+    <div id="pkg-skipped" style="display:none" class="skipped-note">
+      <span style="font-size:14px;color:var(--muted)">Step skipped — bracelet will ship with standard 4ocean packaging</span>
+      <button class="undo-skip" onclick="unskipStep(3)">Add custom packaging</button>
+    </div>
+  </div>
+
+  <div class="step-nav-row">
+    <button class="back-btn" onclick="goToStep(2)">← Back</button>
+    <button class="next-btn" onclick="goToStep(4)">Review &amp; order →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!-- STEP 4: ORDER SUMMARY                               -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="step-section" id="step-4">
+  <div class="flow-hero" style="margin-bottom:24px">
+    <p class="flow-hero-eyebrow">Corporate Gifting — Step 4 of 4</p>
+    <h1 class="flow-hero-title"><em>Almost there.</em><br>Review your order.</h1>
+  </div>
+  <div class="order-layout">
+
+    <!-- Left: recap -->
+    <div class="order-recap">
+      <div class="recap-title">Your configuration</div>
+
+      <div class="recap-step" id="recap-1">
+        <div class="recap-step-num">1</div>
+        <div class="recap-step-body">
+          <div class="recap-step-name">Bracelet</div>
+          <div class="recap-step-detail" id="recap-bracelet-detail">
+            Style: Clear Bead<br>
+            String 1: <span id="recap-s1-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#74D1EA;vertical-align:middle;margin-right:4px"></span><span id="recap-s1">Sky Blue</span><br>
+            String 2: <span id="recap-s2-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#E8B3C3;vertical-align:middle;margin-right:4px"></span><span id="recap-s2">Rose Quartz</span>
+          </div>
+          <button class="recap-edit" onclick="goToStep(1)">Edit →</button>
+        </div>
+      </div>
+
+      <div class="recap-step" id="recap-2">
+        <div class="recap-step-num">2</div>
+        <div class="recap-step-body">
+          <div class="recap-step-name">Charm engraving</div>
+          <div class="recap-step-detail" id="recap-charm-detail">Not added</div>
+          <button class="recap-edit" onclick="goToStep(2)">Edit →</button>
+        </div>
+      </div>
+
+      <div class="recap-step" id="recap-3">
+        <div class="recap-step-num">3</div>
+        <div class="recap-step-body">
+          <div class="recap-step-name">Custom packaging</div>
+          <div class="recap-step-detail" id="recap-pkg-detail">Not added</div>
+          <button class="recap-edit" onclick="goToStep(3)">Edit →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: order card -->
+    <div>
+      <div class="order-summary-card">
+        <div class="order-summary-head">
+          <h3>Order summary</h3>
+          <p>Review and request a quote or add to cart</p>
+        </div>
+        <div class="order-rows">
+          <div class="order-row">
+            <span class="order-key">Style</span>
+            <span class="order-val" id="sum-style">Clear Bead</span>
+          </div>
+          <div class="order-row">
+            <span class="order-key">String 1</span>
+            <span class="order-val">
+              <span class="order-dot" id="sum-dot1" style="background:#74D1EA"></span>
+              <span id="sum-s1">Sky Blue</span>
+            </span>
+          </div>
+          <div class="order-row">
+            <span class="order-key">String 2</span>
+            <span class="order-val">
+              <span class="order-dot" id="sum-dot2" style="background:#E8B3C3"></span>
+              <span id="sum-s2">Rose Quartz</span>
+            </span>
+          </div>
+          <div class="order-row">
+            <span class="order-key">Charm engraving</span>
+            <span class="order-val empty" id="sum-charm">Skipped</span>
+          </div>
+          <div class="order-row">
+            <span class="order-key">Custom packaging</span>
+            <span class="order-val empty" id="sum-pkg">Skipped</span>
+          </div>
+        </div>
+
+        <div class="qty-block">
+          <div class="qty-label">Quantity</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty(-10)">−</button>
+            <div class="qty-num" id="qty-num">50</div>
+            <button class="qty-btn" onclick="changeQty(10)">+</button>
+          </div>
+          <p class="qty-min">Minimum 25 units · Bulk pricing available</p>
+        </div>
+
+        <div class="cta-block">
+          <button class="cta-primary" onclick="openQuoteModal()">Request a quote</button>
+          <div class="cta-divider">— OR —</div>
+          <button class="cta-secondary" onclick="handleAddToCart()">Add to cart</button>
+          <p class="cta-note">Add to cart requires Shopify product integration</p>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;background:var(--panel);border-radius:18px;padding:20px 24px;box-shadow:0 4px 20px rgba(0,0,0,.05)">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <div style="width:36px;height:36px;background:#e6f9f0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🌊</div>
+          <div style="font-size:14px;font-weight:800">Every purchase removes plastic</div>
+        </div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.55;margin:0">
+          Each bracelet order funds the removal of plastic and trash from the ocean, rivers, and coastlines — verified and tracked on the 4ocean Impact Portal.
+        </p>
+      </div>
+    </div>
+
+  </div>
+  <div class="step-nav-row">
+    <button class="back-btn" onclick="goToStep(3)">← Back</button>
+  </div>
+</div>
+
+</main>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!-- QUOTE MODAL                                         -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="quote-modal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeQuoteModal()">×</button>
+    <div id="modal-form-wrap">
+      <h2 class="modal-title">Request a quote</h2>
+      <p class="modal-sub">We'll reach out within one business day with pricing and next steps.</p>
+      <!-- Mini bracelet snapshot -->
+      <div class="modal-snapshot" id="modal-snapshot">
+        <canvas id="modal-canvas" style="width:100%;height:100%;display:block"></canvas>
+        <div class="modal-snapshot-chips">
+          <div class="ms-chip"><div class="ms-dot" id="ms-dot1" style="background:#74D1EA"></div><span id="ms-s1">Sky Blue</span></div>
+          <div class="ms-chip"><div class="ms-dot" id="ms-dot2" style="background:#E8B3C3"></div><span id="ms-s2">Rose Quartz</span></div>
+        </div>
+      </div>
+      <div class="mf-2col">
+        <div class="mf-row"><label class="mf-label">First name</label><input class="mf-input" id="q-first" placeholder="Alex" type="text"></div>
+        <div class="mf-row"><label class="mf-label">Last name</label><input class="mf-input" id="q-last" placeholder="Johnson" type="text"></div>
+      </div>
+      <div class="mf-row"><label class="mf-label">Work email</label><input class="mf-input" id="q-email" placeholder="alex@company.com" type="email"></div>
+      <div class="mf-row"><label class="mf-label">Company</label><input class="mf-input" id="q-company" placeholder="Acme Corp" type="text"></div>
+      <div class="mf-2col">
+        <div class="mf-row"><label class="mf-label">Quantity</label><input class="mf-input" id="q-qty" type="number" min="25" value="50"></div>
+        <div class="mf-row"><label class="mf-label">Needed by</label><input class="mf-input" id="q-date" placeholder="e.g. Dec 2026" type="text"></div>
+      </div>
+      <div class="mf-row"><label class="mf-label">Notes</label><textarea class="mf-input mf-textarea" id="q-notes" placeholder="Budget range, delivery address, special requests…"></textarea></div>
+      <button class="modal-submit" onclick="submitQuote()">Send quote request</button>
+    </div>
+    <div class="modal-success" id="modal-success" style="display:none">
+      <div class="success-ring">✓</div>
+      <h3>Quote request sent!</h3>
+      <p>We'll reach out to <strong id="success-email"></strong> within one business day with pricing and next steps.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Global state ──────────────────────────────────────────────────────────────
+const ST = {
+  step: 1,
+  style: 'Clear Bead Bracelet',
+  s1: { name: 'Sky Blue',     hex: '#74D1EA' },
+  s2: { name: 'Rose Quartz',  hex: '#E8B3C3' },
+  charmSkipped: false,  charmFile: null,
+  pkgSkipped: false,    pkgFile: null,
+  qty: 50
+};
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function goToStep(n) {
+  document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  document.querySelectorAll('.step-pill').forEach(p => {
+    const s = parseInt(p.dataset.step);
+    p.classList.toggle('active', s === n);
+    p.classList.toggle('done', s < n);
+  });
+  ST.step = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (n === 4) refreshStep4();
+  if (n === 2) maybeInitCharm();
+}
+
+// ── Iframe height auto-resize ─────────────────────────────────────────────────
+function syncIframeHeight(iframe) {
+  // Check if server is reachable
+  iframe.onerror = () => { document.getElementById('server-warning').style.display = ''; };
+
+  // Auto-size using polling (cross-origin safe via try/catch)
+  function resize() {
+    try {
+      const h = iframe.contentDocument.documentElement.scrollHeight;
+      if (h > 200) {
+        iframe.style.height = (h + 40) + 'px';
+      }
+    } catch(e) {
+      // Cross-origin or not loaded yet - use fixed height
+      iframe.style.height = '1150px';
+    }
+  }
+  resize();
+  // Poll every 500ms for first 10 seconds (3D model loads async)
+  let polls = 0;
+  const t = setInterval(() => {
+    resize();
+    if (++polls > 20) clearInterval(t);
+  }, 500);
+
+  // Listen for postMessage from the bracelet configurator
+  window.addEventListener('message', e => {
+    if (!e.data) return;
+    if (e.data.type === 'bracelet-selection') {
+      if (e.data.s1) { ST.s1 = e.data.s1; }
+      if (e.data.s2) { ST.s2 = e.data.s2; }
+      if (e.data.style) { ST.style = e.data.style; }
+      updateHeaderSummary();
+    }
+    if (e.data.type === 'bracelet-height') {
+      iframe.style.height = (e.data.height + 40) + 'px';
+    }
+  });
+}
+
+function updateHeaderSummary() {
+  document.getElementById('hsum-dot1').style.background = ST.s1.hex;
+  document.getElementById('hsum-s1').textContent = ST.s1.name;
+  document.getElementById('hsum-dot2').style.background = ST.s2.hex;
+  document.getElementById('hsum-s2').textContent = ST.s2.name;
+}
+
+// ── Skip / unskip ─────────────────────────────────────────────────────────────
+function skipStep(n) {
+  if (n === 2) {
+    ST.charmSkipped = true;
+    document.getElementById('charm-body').style.display = 'none';
+    document.getElementById('charm-skipped').style.display = 'flex';
+    document.querySelectorAll('.step-card-header .skip-link')[0].style.display = 'none';
+  }
+  if (n === 3) {
+    ST.pkgSkipped = true;
+    document.getElementById('pkg-body').style.display = 'none';
+    document.getElementById('pkg-skipped').style.display = 'flex';
+  }
+}
+function unskipStep(n) {
+  if (n === 2) {
+    ST.charmSkipped = false;
+    document.getElementById('charm-body').style.display = '';
+    document.getElementById('charm-skipped').style.display = 'none';
+  }
+  if (n === 3) {
+    ST.pkgSkipped = false;
+    document.getElementById('pkg-body').style.display = '';
+    document.getElementById('pkg-skipped').style.display = 'none';
+  }
+}
+
+// ── Qty ───────────────────────────────────────────────────────────────────────
+function changeQty(delta) {
+  ST.qty = Math.max(25, ST.qty + delta);
+  document.getElementById('qty-num').textContent = ST.qty;
+  document.getElementById('q-qty').value = ST.qty;
+}
+
+// ── Step 4 refresh ────────────────────────────────────────────────────────────
+function refreshStep4() {
+  document.getElementById('sum-style').textContent = ST.style;
+  document.getElementById('sum-dot1').style.background = ST.s1.hex;
+  document.getElementById('sum-s1').textContent = ST.s1.name;
+  document.getElementById('sum-dot2').style.background = ST.s2.hex;
+  document.getElementById('sum-s2').textContent = ST.s2.name;
+  document.getElementById('recap-s1-dot').style.background = ST.s1.hex;
+  document.getElementById('recap-s1').textContent = ST.s1.name;
+  document.getElementById('recap-s2-dot').style.background = ST.s2.hex;
+  document.getElementById('recap-s2').textContent = ST.s2.name;
+
+  const charmEl = document.getElementById('sum-charm');
+  const recapCharm = document.getElementById('recap-charm-detail');
+  if (ST.charmSkipped) {
+    charmEl.textContent = 'Skipped'; charmEl.className = 'order-val empty';
+    recapCharm.textContent = 'Skipped';
+    document.querySelector('#recap-2 .recap-step-num').style.background = '#ddd';
+    document.querySelector('#recap-2 .recap-step-num').style.color = '#999';
+  } else if (ST.charmFile) {
+    charmEl.textContent = '✓ ' + ST.charmFile.name; charmEl.className = 'order-val';
+    recapCharm.textContent = 'Logo: ' + ST.charmFile.name;
+    document.querySelector('#recap-2 .recap-step-num').style.background = '';
+    document.querySelector('#recap-2 .recap-step-num').style.color = '';
+  } else {
+    charmEl.textContent = 'Not added'; charmEl.className = 'order-val empty';
+    recapCharm.textContent = 'No logo uploaded';
+  }
+
+  const pkgEl = document.getElementById('sum-pkg');
+  const recapPkg = document.getElementById('recap-pkg-detail');
+  if (ST.pkgSkipped) {
+    pkgEl.textContent = 'Skipped'; pkgEl.className = 'order-val empty';
+    recapPkg.textContent = 'Skipped — standard packaging';
+    document.querySelector('#recap-3 .recap-step-num').style.background = '#ddd';
+    document.querySelector('#recap-3 .recap-step-num').style.color = '#999';
+  } else if (ST.pkgFile) {
+    pkgEl.textContent = '✓ Graphic uploaded'; pkgEl.className = 'order-val';
+    recapPkg.textContent = 'Brand graphic: ' + ST.pkgFile.name;
+  } else {
+    pkgEl.textContent = 'Not added'; pkgEl.className = 'order-val empty';
+    recapPkg.textContent = 'No graphic uploaded';
+  }
+
+  document.getElementById('qty-num').textContent = ST.qty;
+
+  // Update modal chips
+  document.getElementById('ms-dot1').style.background = ST.s1.hex;
+  document.getElementById('ms-s1').textContent = ST.s1.name;
+  document.getElementById('ms-dot2').style.background = ST.s2.hex;
+  document.getElementById('ms-s2').textContent = ST.s2.name;
+}
+
+// ── Quote modal ───────────────────────────────────────────────────────────────
+function openQuoteModal() {
+  document.getElementById('q-qty').value = ST.qty;
+  document.getElementById('modal-form-wrap').style.display = '';
+  document.getElementById('modal-success').style.display = 'none';
+  document.getElementById('quote-modal').classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+  renderModalCanvas();
+}
+function closeQuoteModal() {
+  document.getElementById('quote-modal').classList.remove('is-open');
+  document.body.style.overflow = '';
+}
+document.getElementById('quote-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeQuoteModal();
+});
+
+function renderModalCanvas() {
+  // Draw a simple flat bracelet using the chosen colors
+  const canvas = document.getElementById('modal-canvas');
+  const snap = document.getElementById('modal-snapshot');
+  canvas.width = snap.clientWidth || 480;
+  canvas.height = snap.clientHeight || 180;
+  const c = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  c.fillStyle = '#0d1b2a';
+  c.fillRect(0,0,W,H);
+  // Draw ellipse bracelet
+  c.save();
+  c.translate(W/2, H/2 + 8);
+  c.scale(1, 0.42);
+  c.beginPath();
+  c.arc(0, 0, W*0.34, 0, Math.PI*2);
+  c.strokeStyle = ST.s1.hex === 'transparent' ? 'rgba(200,200,200,0.5)' : ST.s1.hex;
+  c.lineWidth = 14;
+  c.stroke();
+  c.beginPath();
+  c.arc(0, 0, W*0.34, 0, Math.PI*2);
+  c.strokeStyle = ST.s2.hex === 'transparent' ? 'rgba(200,200,200,0.5)' : ST.s2.hex;
+  c.lineWidth = 7;
+  c.setLineDash([14,14]);
+  c.stroke();
+  c.restore();
+}
+
+function submitQuote() {
+  const first = document.getElementById('q-first').value.trim();
+  const email = document.getElementById('q-email').value.trim();
+  if (!first || !email) { alert('Please enter your name and email.'); return; }
+  const body = [
+    `Name: ${first} ${document.getElementById('q-last').value.trim()}`,
+    `Email: ${email}`,
+    `Company: ${document.getElementById('q-company').value.trim()}`,
+    `Quantity: ${document.getElementById('q-qty').value}`,
+    `Needed by: ${document.getElementById('q-date').value.trim()}`,
+    ``,
+    `Bracelet style: ${ST.style}`,
+    `String 1: ${ST.s1.name} (${ST.s1.hex})`,
+    `String 2: ${ST.s2.name} (${ST.s2.hex})`,
+    `Charm engraving: ${ST.charmSkipped ? 'Skipped' : ST.charmFile ? ST.charmFile.name : 'Not added'}`,
+    `Custom packaging: ${ST.pkgSkipped ? 'Skipped' : ST.pkgFile ? ST.pkgFile.name : 'Not added'}`,
+    ``,
+    `Notes: ${document.getElementById('q-notes').value.trim()}`
+  ].join('\n');
+  const subject = `Corporate Bracelet Quote — ${document.getElementById('q-qty').value} units — ${first} @ ${document.getElementById('q-company').value.trim()}`;
+  document.getElementById('modal-form-wrap').style.display = 'none';
+  document.getElementById('modal-success').style.display = 'flex';
+  document.getElementById('success-email').textContent = email;
+  setTimeout(() => {
+    window.location.href = `mailto:corporate@4ocean.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }, 800);
+}
+
+function handleAddToCart() {
+  alert('Add to Cart requires embedding this flow into a Shopify product page. Use "Request a quote" for now — it captures all the same information and your team can follow up with an invoice.');
+}
+
+// ── CHARM ENGRAVER — 3D Three.js ─────────────────────────────────────────────
+let charmInited = false;
+
+function maybeInitCharm() {
+  if (charmInited) return;
+  charmInited = true;
+  // Load Three.js UMD + addons, then init
+  function loadScript(src, cb) {
+    const s = document.createElement('script');
+    s.src = src; s.onload = cb;
+    document.head.appendChild(s);
+  }
+  loadScript('https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js', () => {
+    loadScript('https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js', () => {
+      loadScript('https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js', () => {
+        initCharm();
+      });
+    });
+  });
+}
+let charmRenderer, charmScene, charmCamera, charmControls;
+let charmMesh = null, charmLogoImg = null, charmLogoTex = null;
+let charmAnimId = null;
+
+function initCharm() {
+  const mount = document.getElementById('charm-3d-mount');
+  const W = mount.clientWidth || 400;
+  const H = 400;
+
+  charmRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  charmRenderer.setSize(W, H);
+  charmRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  charmRenderer.setClearColor(0x0d1b2a, 1);
+  charmRenderer.outputEncoding = THREE.sRGBEncoding;
+  charmRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+  charmRenderer.toneMappingExposure = 1.4;
+  charmRenderer.domElement.style.cssText = 'display:block;width:100%;height:auto';
+  mount.appendChild(charmRenderer.domElement);
+
+  charmScene = new THREE.Scene();
+  charmCamera = new THREE.PerspectiveCamera(32, W/H, 0.01, 100);
+  charmCamera.position.set(0, 0, 3.2);
+
+  charmControls = new THREE.OrbitControls(charmCamera, charmRenderer.domElement);
+  charmControls.enableDamping = true;
+  charmControls.dampingFactor = 0.08;
+  charmControls.minDistance = 1.5;
+  charmControls.maxDistance = 6;
+  charmControls.enablePan = false;
+
+  // Lighting
+  charmScene.add(new THREE.AmbientLight(0xffffff, 0.9));
+  const key = new THREE.DirectionalLight(0xffffff, 2.0);
+  key.position.set(3, 5, 4); charmScene.add(key);
+  const fill = new THREE.DirectionalLight(0xd0e8ff, 0.6);
+  fill.position.set(-3, 2, 2); charmScene.add(fill);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.4);
+  rim.position.set(0, -3, -3); charmScene.add(rim);
+
+  // Load charm GLB
+  const loader = new THREE.GLTFLoader();
+  loader.load('https://cdn.shopify.com/3d/models/35adcc79903db3c4/tex_charm.glb', gltf => {
+    const model = gltf.scene;
+    const box = new THREE.Box3().setFromObject(model);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    model.position.sub(center);
+    model.scale.setScalar(2.2 / maxDim);
+
+    model.traverse(o => {
+      if (o.isMesh) {
+        charmMesh = o;
+        o.material = new THREE.MeshStandardMaterial({
+          color: 0xc8cdd4,
+          metalness: 0.92,
+          roughness: 0.12,
+        });
+      }
+    });
+    charmScene.add(model);
+    drawCharmHint();
+  }, undefined, err => {
+    console.error('Charm GLB load error:', err);
+    // Fallback: show a silver sphere
+    const geo = new THREE.SphereGeometry(1, 64, 64);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xc8cdd4, metalness: 0.9, roughness: 0.15 });
+    charmMesh = new THREE.Mesh(geo, mat);
+    charmScene.add(charmMesh);
+    drawCharmHint();
+  });
+
+  // Animate loop
+  (function animate() {
+    requestAnimationFrame(animate);
+    charmControls.update();
+    charmRenderer.render(charmScene, charmCamera);
+  })();
+
+  // File input listener
+  document.getElementById('charm-file').addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    ST.charmFile = f;
+    document.getElementById('charm-chip-name').textContent = f.name;
+    document.getElementById('charm-chip').style.display = 'flex';
+    document.getElementById('charm-upload-zone').style.display = 'none';
+    const reader = new FileReader();
+    reader.onload = ev => {
+      charmLogoImg = new Image();
+      charmLogoImg.onload = () => applyLogoToCharm();
+      charmLogoImg.src = ev.target.result;
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+function drawCharmHint() {
+  // Overlay hint text on the 3D canvas using a 2D overlay div
+  const existing = document.getElementById('charm-hint-overlay');
+  if (existing) existing.remove();
+  if (charmLogoImg) return;
+  const ov = document.createElement('div');
+  ov.id = 'charm-hint-overlay';
+  ov.style.cssText = 'position:absolute;bottom:18%;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;';
+  ov.innerHTML = '<div style="color:rgba(180,190,200,0.65);font-size:13px;font-weight:700;font-family:Arial;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,0.5)">Upload your logo<br>to preview it engraved</div>';
+  const stage = document.getElementById('charm-stage');
+  stage.style.position = 'relative';
+  stage.appendChild(ov);
+}
+
+function applyLogoToCharm() {
+  if (!charmMesh || !charmLogoImg) return;
+
+  // Remove hint overlay
+  const hint = document.getElementById('charm-hint-overlay');
+  if (hint) hint.remove();
+
+  const pct = parseInt(document.getElementById('charm-size').value) / 100;
+  const texSize = 512;
+  const cv = document.createElement('canvas');
+  cv.width = texSize; cv.height = texSize;
+  const c = cv.getContext('2d');
+
+  // Silver base
+  const grad = c.createRadialGradient(texSize*0.38, texSize*0.32, 20, texSize/2, texSize/2, texSize*0.5);
+  grad.addColorStop(0, '#f0f2f5');
+  grad.addColorStop(0.4, '#d0d4da');
+  grad.addColorStop(1, '#b0b6be');
+  c.fillStyle = grad;
+  c.beginPath();
+  c.arc(texSize/2, texSize/2, texSize/2, 0, Math.PI*2);
+  c.fill();
+
+  // Logo engraved onto texture
+  const logoSize = texSize * 0.65 * pct;
+  const lw = charmLogoImg.naturalWidth, lh = charmLogoImg.naturalHeight;
+  const scale = Math.min(logoSize / lw, logoSize / lh);
+  const dw = lw * scale, dh = lh * scale;
+  const dx = texSize/2 - dw/2, dy = texSize/2 - dh/2;
+
+  // Offscreen to get pixel data
+  const tmp = document.createElement('canvas');
+  tmp.width = Math.ceil(dw); tmp.height = Math.ceil(dh);
+  const tc = tmp.getContext('2d');
+  tc.clearRect(0,0,tmp.width,tmp.height);
+  tc.drawImage(charmLogoImg, 0, 0, dw, dh);
+  const id = tc.getImageData(0,0,tmp.width,tmp.height), px = id.data;
+  for (let i=0; i<px.length; i+=4) {
+    const a = px[i+3]; if (a < 10) { px[i+3]=0; continue; }
+    const bright = (px[i]*0.299 + px[i+1]*0.587 + px[i+2]*0.114) / 255;
+    const depth = 1 - bright;
+    px[i]   = Math.round(130 - depth*80);
+    px[i+1] = Math.round(138 - depth*80);
+    px[i+2] = Math.round(148 - depth*80);
+    px[i+3] = Math.round(a * (0.1 + depth*0.85));
+  }
+  tc.putImageData(id,0,0);
+
+  // Clip to circle on main canvas
+  c.save();
+  c.beginPath();
+  c.arc(texSize/2, texSize/2, texSize*0.45, 0, Math.PI*2);
+  c.clip();
+  c.globalCompositeOperation = 'multiply';
+  c.drawImage(tmp, dx, dy);
+  c.restore();
+
+  // Apply as texture to charm material
+  if (charmLogoTex) charmLogoTex.dispose();
+  charmLogoTex = new THREE.CanvasTexture(cv);
+
+  charmMesh.material = new THREE.MeshStandardMaterial({
+    map: charmLogoTex,
+    metalness: 0.85,
+    roughness: 0.15,
+    envMapIntensity: 1.0,
+  });
+  charmMesh.material.needsUpdate = true;
+}
+
+function redrawCharm() {
+  applyLogoToCharm();
+}
+
+function removeCharmLogo() {
+  charmLogoImg = null; ST.charmFile = null;
+  document.getElementById('charm-file').value = '';
+  document.getElementById('charm-chip').style.display = 'none';
+  document.getElementById('charm-upload-zone').style.display = '';
+  // Reset to plain silver
+  if (charmMesh) {
+    if (charmLogoTex) { charmLogoTex.dispose(); charmLogoTex = null; }
+    charmMesh.material = new THREE.MeshStandardMaterial({
+      color: 0xc8cdd4, metalness: 0.92, roughness: 0.12, envMapIntensity: 1.2
+    });
+  }
+  drawCharmHint();
+}
+
+// ── PACKAGE DESIGNER ──────────────────────────────────────────────────────────
+const PKG_MASK_URL  = 'https://cdn.shopify.com/s/files/1/0996/1022/files/mask_image.png?v=1783686292';
+const PKG_BRAND_URL = '';
+const PKG_BACK_URL  = 'https://cdn.shopify.com/s/files/1/0996/1022/files/back_image.png?v=1783686292';
+const PKG_W=969, PKG_H=1000;
+const PKG_WIN = { x:0, y:0, w:100, h:37 };
+let pkgFabric, pkgUserImg, pkgMaskImg, pkgBrandImg, pkgFlipped=false;
+
+function initPkg() {
+  const cv = document.getElementById('pkg-canvas');
+  const wrap = cv.parentElement;
+  const dispW = wrap.clientWidth || 480;
+  cv.width = PKG_W; cv.height = PKG_H;
+  cv.style.width = dispW + 'px';
+  cv.style.height = Math.round(PKG_H/PKG_W*dispW) + 'px';
+  if (PKG_BACK_URL) {
+    document.getElementById('pkg-back-img').src = PKG_BACK_URL;
+    document.getElementById('pkg-back-ph').style.display = 'none';
+  }
+  if (!PKG_MASK_URL && !PKG_BRAND_URL) {
+    document.getElementById('pkg-storage-note').style.display = '';
+  }
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js';
+  s.onload = initFabricPkg;
+  document.head.appendChild(s);
+  document.getElementById('pkg-file').addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    ST.pkgFile = f;
+    document.getElementById('pkg-upload-btn').textContent = 'Replace graphic';
+    document.getElementById('pkg-scale-row').style.display = '';
+    const ar = document.getElementById('pkg-actions');
+    ar.style.display = 'flex';
+    const reader = new FileReader();
+    reader.onload = ev => addPkgImage(ev.target.result);
+    reader.readAsDataURL(f);
+  });
+}
+
+function initFabricPkg() {
+  const cv = document.getElementById('pkg-canvas');
+  pkgFabric = new fabric.Canvas(cv, { selection:false, preserveObjectStacking:true, backgroundColor:'#ffffff' });
+  pkgFabric.setDimensions({ width:cv.style.width, height:cv.style.height }, { cssOnly:true });
+  const win = { left:PKG_W*PKG_WIN.x/100, top:PKG_H*PKG_WIN.y/100, width:PKG_W*PKG_WIN.w/100, height:PKG_H*PKG_WIN.h/100 };
+  window._pkgWin = win;
+  pkgFabric.add(new fabric.Rect({ left:win.left,top:win.top,width:win.width,height:win.height, fill:'rgba(0,0,0,0)', stroke:'rgba(0,100,190,0.4)', strokeDashArray:[12,6], strokeWidth:2, selectable:false, evented:false, excludeFromExport:true }));
+  function loadOverlay(url, cb) {
+    if (!url) { cb(null); return; }
+    fabric.Image.fromURL(url, img => { img.set({left:0,top:0,selectable:false,evented:false,hoverCursor:'default'}); img.scaleToWidth(PKG_W); cb(img); }, { crossOrigin:'anonymous' });
+  }
+  loadOverlay(PKG_MASK_URL, m => { if(m){pkgMaskImg=m;pkgFabric.add(m);} loadOverlay(PKG_BRAND_URL, b => { if(b){pkgBrandImg=b;pkgFabric.add(b);} pkgRestack(); }); });
+}
+
+function addPkgImage(dataUrl) {
+  if (!pkgFabric) return;
+  const win = window._pkgWin;
+  fabric.Image.fromURL(dataUrl, img => {
+    if (pkgUserImg) pkgFabric.remove(pkgUserImg);
+    pkgUserImg = img;
+    img.clipPath = new fabric.Rect({ left:win.left,top:win.top,width:win.width,height:win.height,absolutePositioned:true });
+    const cover = Math.max(win.width/img.width, win.height/img.height);
+    img.scale(cover);
+    img.set({ left:win.left+win.width/2, top:win.top+win.height/2, originX:'center', originY:'center', cornerColor:'#0057B8', borderColor:'#0057B8', cornerSize:12, transparentCorners:false });
+    img._baseScale = cover;
+    pkgFabric.add(img); pkgRestack(); pkgFabric.setActiveObject(img);
+    document.getElementById('pkg-scale').value = 100;
+    document.getElementById('pkg-scale-val').textContent = '100%';
+    document.getElementById('pkg-status').textContent = 'Graphic added — drag to reposition.';
+  });
+}
+
+function pkgRestack() {
+  if (!pkgFabric) return;
+  if (pkgUserImg) pkgFabric.sendToBack(pkgUserImg);
+  if (pkgMaskImg) pkgMaskImg.bringToFront();
+  if (pkgBrandImg) pkgBrandImg.bringToFront();
+  pkgFabric.requestRenderAll();
+}
+
+function updatePkgScale(val) {
+  if (!pkgUserImg) return;
+  pkgUserImg.scale(pkgUserImg._baseScale * parseInt(val)/100);
+  pkgFabric.requestRenderAll();
+}
+
+function pkgRecenter() {
+  if (!pkgUserImg || !window._pkgWin) return;
+  const w = window._pkgWin;
+  pkgUserImg.set({ left:w.left+w.width/2, top:w.top+w.height/2 });
+  pkgUserImg.setCoords(); pkgFabric.requestRenderAll();
+}
+
+function pkgRemove() {
+  if (pkgUserImg) { pkgFabric.remove(pkgUserImg); pkgUserImg = null; }
+  ST.pkgFile = null;
+  document.getElementById('pkg-file').value = '';
+  document.getElementById('pkg-upload-btn').textContent = 'Upload your graphic';
+  document.getElementById('pkg-scale-row').style.display = 'none';
+  document.getElementById('pkg-actions').style.display = 'none';
+  document.getElementById('pkg-status').textContent = '';
+}
+
+function flipPkg() {
+  pkgFlipped = !pkgFlipped;
+  document.getElementById('pkg-flip-inner').style.transform = pkgFlipped ? 'rotateY(180deg)' : '';
+  document.getElementById('pkg-flip-btn').textContent = pkgFlipped ? 'View custom front' : 'View back of package';
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  initPkg();
+});
+</script>
+</body>
+</html>

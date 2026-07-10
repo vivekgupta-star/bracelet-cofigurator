@@ -1,0 +1,1671 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Custom Bracelet Configurator — Enhanced</title>
+<style>
+  :root {
+    --brand-blue: #0057B8;
+    --brand-teal: #007D8A;
+    --ink: #111;
+    --muted: #666;
+    --panel: #ffffff;
+    --soft: #f7fbfc;
+    --border: #e5edf0;
+    --string-one: #74D1EA;
+    --string-two: #E8B3C3;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--ink);
+    background: #f4f7f8;
+  }
+
+  .custom-bracelet-section {
+    max-width: 1280px;
+    margin: 40px auto;
+    padding: 24px;
+  }
+
+  .config-card {
+    background: var(--panel);
+    border-radius: 28px;
+    box-shadow: 0 18px 60px rgba(0,0,0,.08);
+    overflow: hidden;
+  }
+
+  .config-header {
+    padding: 34px 34px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .eyebrow {
+    margin: 0 0 8px;
+    color: var(--brand-teal);
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-size: 13px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(30px, 4.8vw, 58px);
+    line-height: .95;
+    letter-spacing: -.045em;
+    text-transform: uppercase;
+  }
+
+  h1 span { color: var(--brand-blue); }
+
+  .intro {
+    margin: 16px 0 0;
+    max-width: 760px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .config-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.02fr;
+    gap: 28px;
+    padding: 30px;
+    align-items: start;
+  }
+
+  .control-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .selector-card,
+  .cart-area {
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 20px;
+    background: #fff;
+  }
+
+  .selector-card h2,
+  .cart-area h2 {
+    margin: 0 0 5px;
+    font-size: 22px;
+    letter-spacing: -.02em;
+  }
+
+  .selector-card p,
+  .cart-area p {
+    margin: 0 0 16px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .style-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .style-option {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, #fff 0%, #f8fbfc 100%);
+    border-radius: 18px;
+    padding: 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+  }
+
+  .style-option:hover {
+    transform: translateY(-1px);
+  }
+
+  .style-option.is-selected {
+    border-color: rgba(0,87,184,.48);
+    box-shadow: 0 0 0 3px rgba(0,87,184,.10);
+  }
+
+  .style-option strong {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+
+  .style-option span {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.35;
+    display: block;
+  }
+
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+  }
+
+  .swatch {
+    appearance: none;
+    border: 2px solid transparent;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 10px;
+    position: relative;
+  }
+
+  .swatch span {
+    display: block;
+    height: 34px;
+    border-radius: 9px;
+    border: 1px solid rgba(0,0,0,.14);
+  }
+
+  .swatch[data-hex="#FFFFFF"] span {
+    background:
+      linear-gradient(45deg, #ddd 25%, transparent 25%),
+      linear-gradient(-45deg, #ddd 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #ddd 75%),
+      linear-gradient(-45deg, transparent 75%, #ddd 75%);
+    background-color: #fff;
+    background-size: 12px 12px;
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+  }
+
+  .swatch.is-selected {
+    border-color: #111;
+    box-shadow: 0 0 0 3px rgba(0,87,184,.14);
+  }
+
+  .swatch:focus-visible,
+  .style-option:focus-visible,
+  .add-btn:focus-visible {
+    outline: 3px solid rgba(0,125,138,.35);
+    outline-offset: 2px;
+  }
+
+  .selected-note {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .selected-note strong {
+    color: #111;
+  }
+
+  .preview-panel {
+    position: sticky;
+    top: 18px;
+    background: linear-gradient(180deg, #fff 0%, var(--soft) 100%);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 24px;
+    min-height: 760px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .preview-title {
+    text-align: center;
+    font-weight: 800;
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .preview-subtitle {
+    text-align: center;
+    color: var(--muted);
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .bracelet-scene {
+    perspective: 1200px;
+    width: min(100%, 620px);
+    margin: 0 auto;
+    padding: 10px 0 0;
+  }
+
+  .bracelet-wrap {
+    width: 100%;
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: box-shadow .18s ease;
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .is-hidden { display: none !important; }
+
+  .color-one-stroke { stroke: var(--string-one); }
+  .color-two-stroke { stroke: var(--string-two); }
+  .color-one-fill { fill: var(--string-one); }
+  .color-two-fill { fill: var(--string-two); }
+  .color-one-bg { background: var(--string-one); }
+  .color-two-bg { background: var(--string-two); }
+
+  .bracelet-card-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .readout-box,
+  .detail-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+  }
+
+  .readout-label,
+  .detail-label {
+    color: var(--muted);
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+  }
+
+  .readout-value,
+  .detail-value {
+    font-weight: 800;
+    line-height: 1.4;
+  }
+
+  .detail-card {
+    padding-bottom: 10px;
+  }
+
+  .detail-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+
+  .detail-head .detail-value {
+    font-size: 13px;
+    color: var(--brand-blue);
+    font-weight: 800;
+  }
+
+  .closeup-stage {
+    background: linear-gradient(180deg, #fbfdfe 0%, #f4f8fa 100%);
+    border: 1px solid #ebf1f3;
+    border-radius: 14px;
+    padding: 10px;
+  }
+
+  .chips-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .chip {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 10px;
+    background: #fff;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .chip-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,.12);
+    flex: 0 0 auto;
+  }
+
+  .chip span:last-child {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .micro-note {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .cart-area {
+    background: var(--soft);
+  }
+
+  .add-btn {
+    width: 100%;
+    border: 0;
+    border-radius: 999px;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    background: var(--brand-blue);
+    color: #fff;
+    cursor: pointer;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+
+  .add-btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+  }
+
+  .add-btn:not(:disabled):hover { transform: translateY(-1px); }
+
+  .code-note {
+    margin-top: 16px !important;
+    color: var(--muted);
+    font-size: 12px !important;
+    line-height: 1.45;
+  }
+
+  /* Hidden when embedded in the corporate gifting flow — quote lives on Step 4 */
+  .cart-area .add-btn,
+  .cart-area .micro-note,
+  #request-quote-btn,
+  .modal-overlay { display: none !important; }
+
+  .shimmer-circle {
+    animation: floatGlow 4s ease-in-out infinite;
+  }
+
+  .bead-glint {
+    animation: twinkle 3.6s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: .45; transform: scale(1); }
+    50% { opacity: .92; transform: scale(1.18); }
+  }
+
+  @keyframes floatGlow {
+    0%, 100% { opacity: .28; transform: translateY(0); }
+    50% { opacity: .42; transform: translateY(-4px); }
+  }
+
+  @media (max-width: 980px) {
+    .config-layout {
+      grid-template-columns: 1fr;
+      padding: 18px;
+    }
+
+    .preview-panel {
+      position: static;
+      min-height: auto;
+      order: -1;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .swatch-grid { grid-template-columns: repeat(6, 1fr); }
+    .style-grid,
+    .bracelet-card-row { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 520px) {
+    .custom-bracelet-section { padding: 12px; margin: 18px auto; }
+    .config-header { padding: 24px 20px 14px; }
+    .swatch-grid { grid-template-columns: repeat(5, 1fr); }
+    .preview-panel { padding: 18px; }
+  }
+
+  /* ── 3D / 2D toggle ── */
+  .view-toggle {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+  .view-btn {
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 999px;
+    padding: 5px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--muted);
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .view-btn.active {
+    background: var(--brand-blue);
+    color: #fff;
+    border-color: var(--brand-blue);
+  }
+
+  /* ── 3D canvas container ── */
+  .canvas-3d-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #0d1b2a;
+  }
+  .canvas-3d-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+  .canvas-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #546e7a;
+    background: #0d1b2a;
+  }
+  .canvas-spinner {
+    width: 30px; height: 30px;
+    border: 3px solid #1e3a5f;
+    border-top-color: #4fc3f7;
+    border-radius: 50%;
+    animation: spin3d .8s linear infinite;
+  }
+  @keyframes spin3d { to { transform: rotate(360deg); } }
+
+  /* ── Closeup 3D canvas ── */
+  .closeup-3d-wrap {
+    position: relative;
+    width: 100%;
+    height: 130px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #f4f8fa;
+    border: 1px solid #ebf1f3;
+  }
+  .closeup-3d-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+  .closeup-label {
+    position: absolute;
+    bottom: 7px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: rgba(0,0,0,.28);
+    pointer-events: none;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+  .canvas-hint {
+    position: absolute;
+    bottom: 8px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: rgba(255,255,255,.25);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  /* ── Quote summary ── */
+  .quote-summary {
+    background: var(--soft);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .quote-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+  .quote-key { color: var(--muted); }
+  .quote-val { font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .qs-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,.12);
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  /* ── Modal overlay ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,.52);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .22s ease;
+  }
+  .modal-overlay.is-open {
+    opacity: 1; pointer-events: all;
+  }
+  .modal-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 24px;
+    width: calc(100vw - 40px); max-width: 560px;
+    max-height: 92vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    box-shadow: 0 24px 80px rgba(0,0,0,.22);
+    transform: translateY(16px);
+    transition: transform .22s ease;
+  }
+  .modal-overlay.is-open .modal-card { transform: translateY(0); }
+  .modal-close {
+    position: absolute; top: 16px; right: 20px;
+    border: none; background: none;
+    font-size: 18px; cursor: pointer; color: var(--muted);
+    line-height: 1; padding: 4px 8px; border-radius: 8px;
+  }
+  .modal-close:hover { background: var(--soft); }
+  .modal-title { margin: 0 0 4px; font-size: 22px; letter-spacing: -.02em; }
+  .modal-subtitle { margin: 0 0 18px; font-size: 14px; color: var(--muted); }
+
+  /* Modal bracelet preview */
+  .modal-preview {
+    background: #0d1b2a;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 18px;
+    position: relative;
+    width: 100%;
+    height: 200px;
+  }
+  .modal-preview canvas {
+    width: 100% !important; height: 100% !important; display: block;
+  }
+  .modal-preview-labels {
+    position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px;
+  }
+  .mpv-chip {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: #fff;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Modal form */
+  .modal-form { display: flex; flex-direction: column; gap: 12px; }
+  .mf-row.full { width: 100%; }
+  .mf-row { display: flex; flex-direction: column; gap: 5px; }
+  .mf-label { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .mf-input {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 13px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .mf-input:focus { border-color: var(--brand-blue); }
+  .mf-textarea { resize: vertical; min-height: 72px; }
+  .modal-submit-btn { margin-top: 4px; }
+
+  /* Success state */
+  .modal-success {
+    text-align: center;
+    padding: 20px 0;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .success-icon {
+    width: 56px; height: 56px;
+    background: #e6f9f0;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; color: #00843D;
+  }
+  .modal-success h3 { margin: 0; font-size: 20px; }
+  .modal-success p { margin: 0; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<section class="custom-bracelet-section">
+  <div class="config-card">
+    <header class="config-header">
+      <p class="eyebrow">Corporate gifting customizer</p>
+      <h1><span>Choose two strings.</span><br>Preview both bracelet styles.</h1>
+      <p class="intro">
+        Customers can pick two cord colors and switch between two bracelet options: a clear bead bracelet or a double braided bracelet with no beads. This enhanced mockup adds smoother color transitions, subtle shimmer, a hover effect, and a close-up detail preview.
+      </p>
+    </header>
+
+    <div class="config-layout">
+      <div class="control-panel">
+        <div class="selector-card">
+          <h2>Bracelet Type</h2>
+          <p>Choose which bracelet style you want to preview.</p>
+          <div class="style-grid" aria-label="Bracelet style options">
+            <button type="button" class="style-option is-selected" data-style="beaded">
+              <strong>Clear Bead Bracelet</strong>
+              <span>Glass-like beads stay fixed. Only the two cord strings change.</span>
+            </button>
+            <button type="button" class="style-option" data-style="braided">
+              <strong>Double Braided Bracelet</strong>
+              <span>No beads. A braided two-string bracelet with wrapped center and adjustable tails.</span>
+            </button>
+          </div>
+          <div class="selected-note">Selected style: <strong id="selected-style">Clear Bead Bracelet</strong></div>
+        </div>
+
+        <div class="selector-card">
+          <h2>String 1 Color</h2>
+          <p>Choose the first cord color.</p>
+          <div class="swatch-grid" data-target="one" aria-label="String 1 color options"></div>
+          <div class="selected-note">Selected: <strong id="selected-one">None</strong></div>
+        </div>
+
+        <div class="selector-card">
+          <h2>String 2 Color</h2>
+          <p>Choose the second cord color.</p>
+          <div class="swatch-grid" data-target="two" aria-label="String 2 color options"></div>
+          <div class="selected-note">Selected: <strong id="selected-two">None</strong></div>
+        </div>
+
+        <div class="cart-area">
+          <h2>Your selection</h2>
+          <p>Pick both cord colors above, then continue to the next step to add a charm and custom packaging.</p>
+
+          <input type="hidden" id="property-bracelet-style" value="Clear Bead Bracelet">
+          <input type="hidden" id="property-string-one-name">
+          <input type="hidden" id="property-string-one-hex">
+          <input type="hidden" id="property-string-two-name">
+          <input type="hidden" id="property-string-two-hex">
+
+          <div class="quote-summary" id="quote-summary">
+            <div class="quote-row">
+              <span class="quote-key">Style</span>
+              <span class="quote-val" id="qs-style">Clear Bead Bracelet</span>
+            </div>
+            <div class="quote-row">
+              <span class="quote-key">String 1</span>
+              <span class="quote-val" id="qs-one">
+                <span class="qs-dot" id="qs-dot-one"></span>
+                <span id="qs-one-name">Not selected</span>
+              </span>
+            </div>
+            <div class="quote-row">
+              <span class="quote-key">String 2</span>
+              <span class="quote-val" id="qs-two">
+                <span class="qs-dot" id="qs-dot-two"></span>
+                <span id="qs-two-name">Not selected</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="preview-panel">
+        <p class="preview-title">Your custom string combination</p>
+        <p class="preview-subtitle" id="preview-subtitle">Clear beads stay fixed. Only the two cord strings change.</p>
+
+        <!-- View toggle -->
+        <div class="view-toggle">
+          <button class="view-btn active" id="btn-3d" onclick="setView('3d')">3D Preview</button>
+          <button class="view-btn" id="btn-2d" onclick="setView('2d')">Flat Preview</button>
+        </div>
+
+        <!-- 3D Canvas (default) -->
+        <div class="canvas-3d-wrap" id="canvas-3d-wrap">
+          <canvas id="canvas3d"></canvas>
+          <div class="canvas-loading" id="canvas-loading">
+            <div class="canvas-spinner"></div>
+            <span>Loading 3D bracelet…</span>
+          </div>
+          <div class="canvas-hint">Drag to rotate · Scroll to zoom</div>
+        </div>
+
+        <!-- 2D SVG (hidden by default) -->
+        <div id="svg-2d-wrap" style="display:none">
+        <div class="bracelet-scene" id="bracelet-scene">
+          <div class="bracelet-wrap" id="bracelet-wrap">
+            <svg viewBox="0 0 520 560" role="img" aria-label="Custom bracelet preview with switchable bracelet styles">
+              <defs>
+                <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#000" flood-opacity=".14"/>
+                </filter>
+                <filter id="beadShadow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feDropShadow dx="1" dy="3" stdDeviation="3" flood-color="#7a9eaa" flood-opacity=".24"/>
+                </filter>
+                <linearGradient id="silver" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0" stop-color="#ffffff"/>
+                  <stop offset=".42" stop-color="#bac2c6"/>
+                  <stop offset="1" stop-color="#f7f7f7"/>
+                </linearGradient>
+                <radialGradient id="beadGlass" cx="30%" cy="25%" r="75%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity=".98"/>
+                  <stop offset="35%" stop-color="#f4fbfd" stop-opacity=".86"/>
+                  <stop offset="76%" stop-color="#d7e9ef" stop-opacity=".56"/>
+                  <stop offset="100%" stop-color="#b8d3dc" stop-opacity=".40"/>
+                </radialGradient>
+                <radialGradient id="beadTint" cx="45%" cy="35%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity=".18"/>
+                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="wrapLight" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#fff2"/>
+                  <stop offset="100%" stop-color="#0000"/>
+                </linearGradient>
+              </defs>
+
+              <g id="beaded-scene">
+                <ellipse class="shimmer-circle" cx="260" cy="250" rx="182" ry="210" fill="#eef7f8" opacity=".42"/>
+
+                <g id="beaded-cords" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <ellipse class="color-two-stroke" cx="260" cy="228" rx="147" ry="162" stroke-width="5.4" opacity=".90"/>
+                  <ellipse class="color-one-stroke" cx="260" cy="228" rx="137" ry="152" stroke-width="5.6" opacity=".96"/>
+                  <path class="color-one-stroke preview-trace-one" d="M247 392 C216 426 180 458 138 492" stroke-width="7"/>
+                  <path class="color-one-stroke preview-trace-one" d="M273 392 C304 426 340 458 382 492" stroke-width="7"/>
+                  <path class="color-two-stroke preview-trace-two" d="M235 395 C193 418 153 438 102 454" stroke-width="7"/>
+                  <path class="color-two-stroke preview-trace-two" d="M285 395 C327 418 367 438 418 454" stroke-width="7"/>
+                  <circle class="color-one-fill" cx="138" cy="492" r="8"/>
+                  <circle class="color-one-fill" cx="382" cy="492" r="8"/>
+                  <circle class="color-two-fill" cx="102" cy="454" r="7.5"/>
+                  <circle class="color-two-fill" cx="418" cy="454" r="7.5"/>
+                </g>
+
+                <g id="beads-group"></g>
+
+
+              </g>
+
+              <g id="braided-scene" class="is-hidden">
+                <ellipse class="shimmer-circle" cx="260" cy="248" rx="182" ry="210" fill="#eef7f8" opacity=".42"/>
+                <ellipse cx="260" cy="228" rx="144" ry="156" fill="none" stroke="#123a59" stroke-opacity=".10" stroke-width="26"/>
+                <ellipse class="color-one-stroke" cx="260" cy="228" rx="144" ry="156" fill="none" stroke-width="22" opacity=".92"/>
+                <ellipse class="color-two-stroke" cx="260" cy="228" rx="144" ry="156" fill="none" stroke-width="22" stroke-dasharray="19 19" stroke-linecap="round" opacity=".95"/>
+                <ellipse cx="260" cy="228" rx="144" ry="156" fill="none" stroke="rgba(255,255,255,.24)" stroke-width="6" stroke-dasharray="10 28" stroke-dashoffset="7" stroke-linecap="round"/>
+
+                <g filter="url(#softShadow)">
+                  <circle class="color-one-fill" cx="133" cy="367" r="12" opacity=".95"/>
+                  <circle class="color-two-fill" cx="387" cy="367" r="12" opacity=".95"/>
+                </g>
+
+                <g id="braid-center-wrap" filter="url(#softShadow)">
+                  <rect x="212" y="382" width="96" height="38" rx="15" fill="#dbefe8" opacity=".65"/>
+                  <rect class="color-one-fill" x="214" y="384" width="92" height="34" rx="14" opacity=".30"/>
+                  <path class="color-two-stroke" d="M224 388 L219 418 M238 386 L233 420 M252 386 L247 420 M266 386 L261 420 M280 386 L275 420 M294 388 L289 418" stroke-width="7" stroke-linecap="round" opacity=".95"/>
+                  <path d="M223 388 L218 418 M237 386 L232 420 M251 386 L246 420 M265 386 L260 420 M279 386 L274 420 M293 388 L288 418" stroke="rgba(255,255,255,.34)" stroke-width="2.2" stroke-linecap="round"/>
+                </g>
+
+                <g id="braided-tails" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path class="color-one-stroke preview-trace-one" d="M241 394 C204 420 168 452 126 488" stroke-width="11"/>
+                  <path class="color-two-stroke preview-trace-two" d="M279 394 C316 420 352 452 394 488" stroke-width="11"/>
+                  <path class="color-two-stroke preview-trace-two" d="M253 401 C214 422 172 444 126 458" stroke-width="11" opacity=".92"/>
+                  <path class="color-one-stroke preview-trace-one" d="M267 401 C306 422 348 444 394 458" stroke-width="11" opacity=".92"/>
+                  <circle class="color-one-fill" cx="126" cy="488" r="8"/>
+                  <circle class="color-two-fill" cx="394" cy="488" r="8"/>
+                  <circle class="color-two-fill" cx="126" cy="458" r="7"/>
+                  <circle class="color-one-fill" cx="394" cy="458" r="7"/>
+                </g>
+              </g>
+            </svg>
+          </div>
+        </div>
+        </div><!-- end svg-2d-wrap -->
+
+        <div class="detail-card">
+          <div class="detail-head">
+            <div>
+              <span class="detail-label">Close-up preview</span>
+              <span class="detail-value">Material detail</span>
+            </div>
+            <span class="detail-value" id="detail-style">Clear Bead Bracelet</span>
+          </div>
+          <div class="closeup-3d-wrap">
+            <canvas id="canvas-closeup"></canvas>
+            <div class="closeup-label">Inside the bead — cord color detail</div>
+          </div>
+          <div class="chips-row">
+            <div class="chip">
+              <span class="chip-dot color-one-bg" id="chip-dot-one"></span>
+              <span id="chip-text-one">String 1 not selected</span>
+            </div>
+            <div class="chip">
+              <span class="chip-dot color-two-bg" id="chip-dot-two"></span>
+              <span id="chip-text-two">String 2 not selected</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bracelet-card-row">
+          <div class="readout-box">
+            <span class="readout-label">String 1</span>
+            <span class="readout-value" id="readout-one">Not selected</span>
+          </div>
+          <div class="readout-box">
+            <span class="readout-label">String 2</span>
+            <span class="readout-value" id="readout-two">Not selected</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ── QUOTE MODAL ─────────────────────────────────────────────── -->
+<div class="modal-overlay" id="quote-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-card">
+    <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+    <h2 class="modal-title" id="modal-title">Request a Quote</h2>
+    <p class="modal-subtitle">Tell us about your order and we'll get back to you within 1 business day.</p>
+
+    <div class="modal-preview" id="modal-preview">
+      <canvas id="canvas-snapshot"></canvas>
+      <div class="modal-preview-labels">
+        <span class="mpv-chip" id="mpv-chip1"></span>
+        <span class="mpv-chip" id="mpv-chip2"></span>
+      </div>
+    </div>
+
+    <div class="modal-form" id="modal-form">
+      <div class="mf-row">
+        <label class="mf-label" for="mf-name">Full Name *</label>
+        <input class="mf-input" id="mf-name" type="text" placeholder="Jane Smith" required>
+      </div>
+      <div class="mf-row">
+        <label class="mf-label" for="mf-email">Email *</label>
+        <input class="mf-input" id="mf-email" type="email" placeholder="jane@company.com" required>
+      </div>
+      <div class="mf-row">
+        <label class="mf-label" for="mf-company">Company</label>
+        <input class="mf-input" id="mf-company" type="text" placeholder="Acme Corp">
+      </div>
+      <div class="mf-row">
+        <label class="mf-label" for="mf-qty">Quantity Requested *</label>
+        <input class="mf-input" id="mf-qty" type="number" min="1" placeholder="e.g. 250" required>
+      </div>
+      <div class="mf-row full">
+        <label class="mf-label" for="mf-msg">Message</label>
+        <textarea class="mf-input mf-textarea" id="mf-msg" placeholder="Any special requirements, event date, etc."></textarea>
+      </div>
+      <button class="add-btn modal-submit-btn" id="modal-submit">Send Quote Request</button>
+      <p class="micro-note" id="modal-status"></p>
+    </div>
+
+    <div class="modal-success" id="modal-success" style="display:none">
+      <div class="success-icon">✓</div>
+      <h3>Quote Request Sent!</h3>
+      <p>We'll reach out to <strong id="success-email"></strong> within 1 business day.</p>
+      <button class="add-btn" id="modal-done">Done</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+  const colors = [
+    ["Warm Red C", "#81002E"], ["Red 200C", "#BA0C2F"], ["Red Coral 2029C", "#E03C31"],
+    ["Red 7621C", "#AB2328"], ["Red Coral 16-1546", "#F05A28"], ["Orange 171C", "#FF5F05"],
+    ["Orange 170C", "#FF6A13"], ["Neon Orange 805C", "#FF8200"], ["Orange 1585C", "#FF6C2F"],
+    ["Orange 7549C", "#FFB549"], ["Yellow 108C", "#FEDB00"], ["Yellow 100C", "#F6EB61"],
+    ["Flamingo 219C", "#DA1884"], ["Pink 508C", "#E8B3C3"], ["Bright Pink 807C", "#EA27C2"],
+    ["Light Pink 502C", "#E9C2C8"], ["Light Sand 489C", "#E9C9B5"], ["Sand 4545C", "#D6C69A"],
+    ["Light Sand 7590C", "#DDBCA0"], ["Brown 469C", "#6D4F47"], ["Sea Turtle 375C", "#97D700"],
+    ["Light Grey 427C", "#D0D3D4"], ["Light Grey 428C", "#C1C6C8"], ["Light Grey 430C", "#7C878E"],
+    ["Black 419C", "#212322"], ["White 2501C", "#FFFFFF"], ["Purple 2617C", "#470A68"],
+    ["Purple 7658C", "#6A2C70"], ["Blue Navy 295C", "#002855"], ["Blue 312C", "#00A3E0"],
+    ["Blue 304C", "#9ADBE8"], ["Blue 4312C", "#6AD1E3"], ["Whale Blue 5265C", "#1E3765"],
+    ["Blue 540C", "#003057"], ["Blue 801C", "#009ACE"], ["Teal 7719C", "#007D8A"],
+    ["Forest Green 574C", "#4A7729"], ["Green 361C", "#43B02A"], ["Green 334C", "#009775"],
+    ["Green 3275C", "#00B398"], ["Green 353C", "#80E0A7"], ["Green 916C", "#7A9A01"],
+    ["Bright Cyan 631C", "#3CB4E5"], ["Mint 7723C", "#50A684"], ["Aqua 3245C", "#7CE0D3"],
+    ["Ocean Blue 0821C", "#74D1EA"], ["Blue 072C", "#10069F"], ["Blue 293C", "#003DA5"],
+    ["Blue 2935C/W028-1", "#0057B8"], ["Blue 7451C", "#89ABE3"], ["Powder Blue 9344C", "#D7E8F7"],
+    ["Blue 7694C", "#01426A"], ["Periwinkle Blue 7667C", "#6E7CA0"], ["Blue 7459C", "#4298B5"]
+  ];
+
+  const styleMeta = {
+    beaded: {
+      label: 'Clear Bead Bracelet',
+      subtitle: 'Clear beads stay fixed. Only the two cord strings change.'
+    },
+    braided: {
+      label: 'Double Braided Bracelet',
+      subtitle: 'No beads. A two-color braided bracelet with wrapped center and adjustable tails.'
+    }
+  };
+
+  const state = {
+    one: null,
+    two: null,
+    style: 'beaded'
+  };
+
+  function buildBeads() {
+    const group = document.getElementById('beads-group');
+    const cx = 260;
+    const cy = 228;
+    const rx = 145;
+    const ry = 155;
+    const total = 30;
+    let html = '';
+
+    for (let i = 0; i < total; i++) {
+      const angle = -Math.PI / 2 + (Math.PI * 2 * i / total);
+      const x = cx + rx * Math.cos(angle);
+      const y = cy + ry * Math.sin(angle);
+      const glintX = x - 5.5;
+      const glintY = y - 5.5;
+      const delay = (i * 0.17).toFixed(2);
+
+      html += `
+        <g class="bead" filter="url(#beadShadow)">
+          <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="18" fill="url(#beadGlass)" stroke="#c5d6dc" stroke-width="1.5"></circle>
+          <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="18" fill="url(#beadTint)" opacity=".18"></circle>
+          <circle class="bead-glint" cx="${glintX.toFixed(1)}" cy="${glintY.toFixed(1)}" r="6.1" fill="#ffffff" opacity=".72" style="animation-delay:${delay}s"></circle>
+          <path d="M ${(x - 8).toFixed(1)} ${(y + 9).toFixed(1)} Q ${(x).toFixed(1)} ${(y + 13).toFixed(1)} ${(x + 8).toFixed(1)} ${(y + 9).toFixed(1)}" fill="none" stroke="#ffffff" stroke-opacity=".38" stroke-width="2" stroke-linecap="round"></path>
+        </g>`;
+    }
+
+    group.innerHTML = html;
+  }
+
+  function buildSwatches() {
+    document.querySelectorAll('.swatch-grid').forEach(grid => {
+      const target = grid.dataset.target;
+
+      colors.forEach(([name, hex]) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'swatch';
+        btn.dataset.name = name;
+        btn.dataset.hex = hex;
+        btn.title = `${name} ${hex}`;
+        btn.setAttribute('aria-label', `${name} ${hex}`);
+        btn.innerHTML = `<span style="background-color:${hex}"></span>`;
+        btn.addEventListener('click', () => selectColor(target, name, hex, btn));
+        grid.appendChild(btn);
+      });
+    });
+  }
+
+  function setElementsColor(nodes, mode, hex) {
+    nodes.forEach(node => {
+      if (mode === 'stroke') node.style.stroke = hex;
+      if (mode === 'fill') node.style.fill = hex;
+      if (mode === 'bg') node.style.backgroundColor = hex;
+    });
+  }
+
+  function animateColor(role, hex) {
+    const strokeNodes = document.querySelectorAll(`.color-${role}-stroke`);
+    const fillNodes = document.querySelectorAll(`.color-${role}-fill`);
+    const bgNodes = document.querySelectorAll(`.color-${role}-bg`);
+
+    document.documentElement.style.setProperty(`--string-${role}`, hex);
+
+    if (window.gsap) {
+      gsap.to(strokeNodes, { stroke: hex, duration: 0.42, ease: 'power2.out' });
+      gsap.to(fillNodes, { fill: hex, duration: 0.42, ease: 'power2.out' });
+      gsap.to(bgNodes, { backgroundColor: hex, duration: 0.42, ease: 'power2.out' });
+
+      const traces = document.querySelectorAll(`.preview-trace-${role}`);
+      gsap.fromTo(traces,
+        { opacity: 0.5, strokeWidth: role === 'one' ? 8.5 : 8.2 },
+        { opacity: 1, strokeWidth: role === 'one' ? 7 : 7, duration: 0.35, ease: 'power2.out' }
+      );
+
+      gsap.fromTo('#bracelet-wrap',
+        { y: 4, scale: 0.992 },
+        { y: 0, scale: 1, duration: 0.38, ease: 'power2.out' }
+      );
+    } else {
+      setElementsColor(strokeNodes, 'stroke', hex);
+      setElementsColor(fillNodes, 'fill', hex);
+      setElementsColor(bgNodes, 'bg', hex);
+    }
+  }
+
+  function selectColor(target, name, hex, btn) {
+    state[target] = { name, hex };
+
+    document.querySelectorAll(`.swatch-grid[data-target="${target}"] .swatch`)
+      .forEach(swatch => swatch.classList.remove('is-selected'));
+
+    btn.classList.add('is-selected');
+
+    animateColor(target, hex);
+
+    if (target === 'one') {
+      document.getElementById('selected-one').textContent = `${name} (${hex})`;
+      document.getElementById('readout-one').textContent = `${name} · ${hex}`;
+      document.getElementById('property-string-one-name').value = name;
+      document.getElementById('property-string-one-hex').value = hex;
+      document.getElementById('chip-text-one').textContent = `${name} · ${hex}`;
+    } else {
+      document.getElementById('selected-two').textContent = `${name} (${hex})`;
+      document.getElementById('readout-two').textContent = `${name} · ${hex}`;
+      document.getElementById('property-string-two-name').value = name;
+      document.getElementById('property-string-two-hex').value = hex;
+      document.getElementById('chip-text-two').textContent = `${name} · ${hex}`;
+    }
+
+    updateCartButton();
+    syncSummary();
+  }
+
+  function selectStyle(style, button) {
+    state.style = style;
+    const meta = styleMeta[style];
+
+    document.querySelectorAll('.style-option').forEach(option => {
+      option.classList.toggle('is-selected', option === button);
+    });
+
+    document.getElementById('selected-style').textContent = meta.label;
+    document.getElementById('detail-style').textContent = meta.label;
+    document.getElementById('preview-subtitle').textContent = meta.subtitle;
+    document.getElementById('property-bracelet-style').value = meta.label;
+
+    document.getElementById('beaded-scene').classList.toggle('is-hidden', style !== 'beaded');
+    document.getElementById('braided-scene').classList.toggle('is-hidden', style !== 'braided');
+    document.getElementById('closeup-beaded').classList.toggle('is-hidden', style !== 'beaded');
+    document.getElementById('closeup-braided').classList.toggle('is-hidden', style !== 'braided');
+
+    if (window.gsap) {
+      const activeScene = style === 'beaded' ? '#beaded-scene' : '#braided-scene';
+      gsap.fromTo(activeScene,
+        { opacity: 0, scale: 0.985, y: 8 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.46, ease: 'power2.out' }
+      );
+      gsap.fromTo('.closeup-stage',
+        { opacity: 0.65, y: 3 },
+        { opacity: 1, y: 0, duration: 0.32, ease: 'power2.out' }
+      );
+    }
+  }
+
+  function updateCartButton() {
+    const ready = Boolean(state.one && state.two);
+    const btn = document.getElementById('request-quote-btn');
+    if (btn) btn.disabled = !ready;
+  }
+
+  function initStyleOptions() {
+    document.querySelectorAll('.style-option').forEach(button => {
+      button.addEventListener('click', () => selectStyle(button.dataset.style, button));
+    });
+  }
+
+  function initHover3D() {
+    const scene = document.getElementById('bracelet-scene');
+    const wrap = document.getElementById('bracelet-wrap');
+    if (!scene || !wrap) return;
+
+    scene.addEventListener('mousemove', event => {
+      const rect = scene.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) - 0.5;
+      const y = ((event.clientY - rect.top) / rect.height) - 0.5;
+      const rotateY = x * 10;
+      const rotateX = -y * 10;
+
+      if (window.gsap) {
+        gsap.to(wrap, {
+          rotateY,
+          rotateX,
+          y: -2,
+          duration: 0.28,
+          ease: 'power2.out',
+          transformPerspective: 1200,
+          transformOrigin: 'center center'
+        });
+      } else {
+        wrap.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
+      }
+    });
+
+    scene.addEventListener('mouseleave', () => {
+      if (window.gsap) {
+        gsap.to(wrap, {
+          rotateX: 0,
+          rotateY: 0,
+          y: 0,
+          duration: 0.35,
+          ease: 'power2.out'
+        });
+      } else {
+        wrap.style.transform = 'none';
+      }
+    });
+  }
+
+  function setDefaultPreviewColors() {
+    animateColor('one', '#74D1EA');
+    animateColor('two', '#E8B3C3');
+  }
+
+  buildBeads();
+  buildSwatches();
+  initStyleOptions();
+  initHover3D();
+  setDefaultPreviewColors();
+
+  // ── VIEW TOGGLE ────────────────────────────────────────────────
+  function setView(mode) {
+    const is3d = mode === '3d';
+    document.getElementById('canvas-3d-wrap').style.display = is3d ? '' : 'none';
+    document.getElementById('svg-2d-wrap').style.display    = is3d ? 'none' : '';
+    document.getElementById('btn-3d').classList.toggle('active', is3d);
+    document.getElementById('btn-2d').classList.toggle('active', !is3d);
+    if (is3d && window._3dResize) window._3dResize();
+  }
+  window.setView = setView;
+</script>
+
+<!-- ── THREE.JS 3D CONFIGURATOR ────────────────────────────────── -->
+<script type="importmap">
+  { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+  } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader }    from 'three/addons/loaders/GLTFLoader.js';
+
+const canvas   = document.getElementById('canvas3d');
+const wrap     = document.getElementById('canvas-3d-wrap');
+const loading  = document.getElementById('canvas-loading');
+
+window._brRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+const renderer = window._brRenderer;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping      = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.35;
+
+const scene  = new THREE.Scene(); window._brScene = scene;
+scene.background = new THREE.Color(0x0d1b2a);
+
+const camera = new THREE.PerspectiveCamera(42, 1, 0.01, 100); window._brCamera = camera;
+camera.position.set(0, 0.05, 3.0);
+
+const controls = new OrbitControls(camera, canvas); window._brControls = controls;
+controls.enableDamping  = true;
+controls.dampingFactor  = 0.07;
+controls.minDistance    = 1.6;
+controls.maxDistance    = 6.5;
+controls.target.set(0, 0.05, 0);
+controls.autoRotate     = true;
+controls.autoRotateSpeed = 1.2;
+// Stop auto-rotate on user interaction
+canvas.addEventListener('pointerdown', () => { controls.autoRotate = false; });
+
+// Lighting
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(2,3,2); scene.add(key);
+const fill= new THREE.DirectionalLight(0x8ab4f8, 0.5); fill.position.set(-2,-1,-1); scene.add(fill);
+const rim = new THREE.DirectionalLight(0xffffff, 0.4); rim.position.set(0,-1,3); scene.add(rim);
+const bot = new THREE.DirectionalLight(0xffffff, 0.2); bot.position.set(0,-3,0); scene.add(bot);
+
+// Materials — cords are solid MeshStandardMaterial, updated by swatch clicks
+const matStr1 = new THREE.MeshStandardMaterial({ color:0x74D1EA, roughness:0.40, metalness:0.05 });
+const matStr2 = new THREE.MeshStandardMaterial({ color:0xE8B3C3, roughness:0.40, metalness:0.05 });
+
+// Load GLBs — beads keep their embedded texture, cords get overridden
+const loader  = new GLTFLoader();
+let loadedCount = 0;
+function onPartLoaded() { if (++loadedCount === 4) { loading.style.display='none'; animate(); } }
+
+// Fixed silver charm — never changes color
+const matCharm = new THREE.MeshStandardMaterial({ color: 0xC0C4CC, metalness: 0.9, roughness: 0.12 });
+
+// Base path — same folder as this HTML (bracelet_parts/)
+const BASE = 'https://cdn.shopify.com/3d/models/cd76e9dc2e904d60/';
+
+loader.load('https://cdn.shopify.com/3d/models/cd76e9dc2e904d60/tex_beads.glb', g => {
+  scene.add(g.scene); onPartLoaded();
+}, undefined, e => { console.error('beads',e); onPartLoaded(); });
+
+loader.load('https://cdn.shopify.com/3d/models/d13841b4d0211383/tex_string_blue.glb', g => {
+  g.scene.traverse(c => { if (c.isMesh) c.material = matStr1; });
+  scene.add(g.scene); onPartLoaded();
+}, undefined, e => { console.error('str1',e); onPartLoaded(); });
+
+loader.load('https://cdn.shopify.com/3d/models/c650d712b434063e/tex_string_white.glb', g => {
+  g.scene.traverse(c => { if (c.isMesh) c.material = matStr2; });
+  scene.add(g.scene); onPartLoaded();
+}, undefined, e => { console.error('str2',e); onPartLoaded(); });
+
+// Fixed silver charm
+loader.load('https://cdn.shopify.com/3d/models/35adcc79903db3c4/tex_charm.glb', g => {
+  g.scene.traverse(c => { if (c.isMesh) c.material = matCharm; });
+  scene.add(g.scene); onPartLoaded();
+}, undefined, e => { console.error('charm',e); onPartLoaded(); });
+
+// Resize
+function resize3d() {
+  const w = wrap.clientWidth, h = wrap.clientHeight || wrap.clientWidth;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+resize3d();
+window._3dResize = resize3d;
+window.addEventListener('resize', resize3d);
+
+// Animate
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+// ── CLOSEUP RENDERER ─────────────────────────────────────────────
+// Procedural scene: 5 glass beads in a row, 2 cord tubes passing through
+const cuCanvas   = document.getElementById('canvas-closeup');
+const cuWrap     = cuCanvas.parentElement;
+const cuRenderer = new THREE.WebGLRenderer({ canvas: cuCanvas, antialias: true, alpha: false });
+cuRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+cuRenderer.outputColorSpace = THREE.SRGBColorSpace;
+cuRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+cuRenderer.toneMappingExposure = 1.6;
+cuRenderer.setClearColor(0xf4f8fa, 1);
+
+const cuScene  = new THREE.Scene();
+cuScene.background = new THREE.Color(0xf0f6f9);
+
+const cuCamera = new THREE.PerspectiveCamera(32, 1, 0.01, 50);
+cuCamera.position.set(0, 0, 4.2);
+cuCamera.lookAt(0, 0, 0);
+
+// Lighting — bright product-photo style
+cuScene.add(new THREE.AmbientLight(0xffffff, 0.7));
+const cuKey = new THREE.DirectionalLight(0xffffff, 2.0);
+cuKey.position.set(2, 3, 3); cuScene.add(cuKey);
+const cuFill = new THREE.DirectionalLight(0xd0e8ff, 0.8);
+cuFill.position.set(-2, 1, 1); cuScene.add(cuFill);
+const cuRim = new THREE.DirectionalLight(0xffffff, 0.6);
+cuRim.position.set(0, -2, 2); cuScene.add(cuRim);
+
+// Glass bead material — clear with refraction look
+const matBeadCU = new THREE.MeshPhysicalMaterial({
+  color: 0xe8f2f8,
+  transparent: true, opacity: 0.72,
+  roughness: 0.02, metalness: 0.0,
+  transmission: 0.55, thickness: 0.4,
+  reflectivity: 0.95, ior: 1.5,
+  envMapIntensity: 1.0,
+});
+
+// Cord tube materials — same objects as main scene, auto-update on swatch click
+const matCord1CU = matStr1;  // shared reference
+const matCord2CU = matStr2;
+
+// Build the scene: 5 beads in a gentle arc, 2 cord tubes through them
+const BEAD_R   = 0.38;
+const BEAD_SEP = 0.82;
+const NUM_BEADS = 5;
+
+// Beads sit in a slight arc
+for (let i = 0; i < NUM_BEADS; i++) {
+  const t = (i / (NUM_BEADS - 1)) - 0.5;  // -0.5 to 0.5
+  const x = t * (BEAD_SEP * (NUM_BEADS - 1));
+  const y = -Math.abs(t) * 0.12;           // very slight arc
+  const geo = new THREE.SphereGeometry(BEAD_R, 32, 24);
+  const mesh = new THREE.Mesh(geo, matBeadCU);
+  mesh.position.set(x, y, 0);
+  cuScene.add(mesh);
+
+  // Subtle highlight sphere inside
+  const hlGeo = new THREE.SphereGeometry(BEAD_R * 0.35, 12, 8);
+  const hlMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.55 });
+  const hl = new THREE.Mesh(hlGeo, hlMat);
+  hl.position.set(x - BEAD_R * 0.28, y + BEAD_R * 0.32, BEAD_R * 0.4);
+  cuScene.add(hl);
+}
+
+// Two cord tubes passing through all beads
+// Cord 1: slightly above center, angled slightly
+// Cord 2: slightly below center, opposite angle
+const CORD_R = 0.072;
+const CORD_LEN = BEAD_SEP * (NUM_BEADS - 1) + BEAD_R * 2.5;
+
+function makeCord(material, offsetY, offsetZ) {
+  const geo = new THREE.CylinderGeometry(CORD_R, CORD_R, CORD_LEN, 16);
+  const mesh = new THREE.Mesh(geo, material);
+  mesh.rotation.z = Math.PI / 2;  // lay horizontal
+  mesh.position.set(0, offsetY, offsetZ);
+  return mesh;
+}
+
+const cord1Mesh = makeCord(matCord1CU, +CORD_R * 1.1,  0);
+const cord2Mesh = makeCord(matCord2CU, -CORD_R * 1.1,  0);
+cuScene.add(cord1Mesh);
+cuScene.add(cord2Mesh);
+
+// Resize
+function resizeCU() {
+  const w = cuWrap.clientWidth;
+  const h = cuWrap.clientHeight || 130;
+  cuRenderer.setSize(w, h, false);
+  cuCamera.aspect = w / h;
+  cuCamera.updateProjectionMatrix();
+}
+resizeCU();
+window.addEventListener('resize', resizeCU);
+
+// Slow gentle rotation
+let cuAngle = 0;
+function animateCU() {
+  requestAnimationFrame(animateCU);
+  cuAngle += 0.004;
+  // Gentle tilt to show inside
+  cuCamera.position.set(Math.sin(cuAngle) * 0.3, 0.4 + Math.sin(cuAngle * 0.7) * 0.1, 4.2);
+  cuCamera.lookAt(0, 0, 0);
+  cuRenderer.render(cuScene, cuCamera);
+}
+animateCU();
+
+// ── Wire into existing animateColor ──────────────────────────────
+// The existing animateColor(role, hex) is called when a swatch is clicked.
+// We patch it to ALSO update the 3D material.
+const _origAnimate = window.animateColor || (() => {});
+window.animateColor3D = function(role, hex) {
+  if (role === 'one') matStr1.color.set(hex);
+  if (role === 'two') matStr2.color.set(hex);
+};
+
+// Patch: override animateColor at script level
+// Since animateColor is defined in the prior script block, we need
+// to call our 3D updater from selectColor instead.
+// Intercept by overriding selectColor's animateColor call via event:
+document.addEventListener('bracelet-color-change', e => {
+  window.animateColor3D(e.detail.role, e.detail.hex);
+});
+</script>
+
+<script>
+// ── QUOTE MODAL LOGIC ────────────────────────────────────────────
+// Global so selectColor can call it directly
+function syncSummary() {
+  const s1hex  = document.getElementById('property-string-one-hex').value;
+  const s1name = document.getElementById('property-string-one-name').value;
+  const s2hex  = document.getElementById('property-string-two-hex').value;
+  const s2name = document.getElementById('property-string-two-name').value;
+  const style  = document.getElementById('property-bracelet-style').value;
+  const qsStyle = document.getElementById('qs-style');
+  if (qsStyle) qsStyle.textContent = style;
+  const qsOne = document.getElementById('qs-one-name');
+  if (qsOne) qsOne.textContent = s1name || 'Not selected';
+  const qsTwo = document.getElementById('qs-two-name');
+  if (qsTwo) qsTwo.textContent = s2name || 'Not selected';
+  if (s1hex) { const d = document.getElementById('qs-dot-one'); if(d) d.style.background = s1hex; }
+  if (s2hex) { const d = document.getElementById('qs-dot-two'); if(d) d.style.background = s2hex; }
+}
+
+(function() {
+  // Defer until DOM fully ready
+  function init() {
+  const modal      = document.getElementById('quote-modal');
+  const openBtn    = document.getElementById('request-quote-btn');
+  const closeBtn   = document.getElementById('modal-close');
+  const doneBtn    = document.getElementById('modal-done');
+  const submitBtn  = document.getElementById('modal-submit');
+  const statusEl   = document.getElementById('modal-status');
+  const successEl  = document.getElementById('modal-success');
+  const formEl     = document.getElementById('modal-form');
+
+  // syncSummary is defined globally below
+
+  // Snapshot the 3D canvas into the modal preview
+  function renderModalPreview() {
+    // Snap camera to show full bracelet front-on
+    if (window._brCamera && window._brControls) {
+      window._brControls.autoRotate = false;
+      // Pull back and center on bracelet — ring + strings all visible
+      window._brCamera.position.set(0, 0.0, 4.2);
+      window._brCamera.lookAt(0, 0.0, 0);
+      window._brControls.target.set(0, 0.0, 0);
+      window._brCamera.fov = 38;
+      window._brCamera.updateProjectionMatrix();
+      window._brControls.update();
+    }
+    if (window._brRenderer) window._brRenderer.render(window._brScene, window._brCamera);
+    const src = document.getElementById('canvas3d');
+    const dst = document.getElementById('canvas-snapshot');
+    const wrap = dst.parentElement;
+    dst.width  = wrap.clientWidth  * window.devicePixelRatio;
+    dst.height = wrap.clientHeight * window.devicePixelRatio;
+    dst.style.width  = wrap.clientWidth  + 'px';
+    dst.style.height = wrap.clientHeight + 'px';
+    const ctx = dst.getContext('2d');
+    // Draw full canvas — no crop, just scale to fit
+    ctx.fillStyle = '#0d1b2a';
+    ctx.fillRect(0, 0, dst.width, dst.height);
+    const srcAspect = src.width / src.height;
+    const dstAspect = dst.width / dst.height;
+    let drawW, drawH, drawX, drawY;
+    if (dstAspect > srcAspect) {
+      drawH = dst.height; drawW = drawH * srcAspect;
+      drawX = (dst.width - drawW) / 2; drawY = 0;
+    } else {
+      drawW = dst.width; drawH = drawW / srcAspect;
+      drawX = 0; drawY = (dst.height - drawH) / 2;
+    }
+    ctx.drawImage(src, 0, 0, src.width, src.height, drawX, drawY, drawW, drawH);
+
+    // Labels
+    const s1name = document.getElementById('property-string-one-name').value;
+    const s1hex  = document.getElementById('property-string-one-hex').value;
+    const s2name = document.getElementById('property-string-two-name').value;
+    const s2hex  = document.getElementById('property-string-two-hex').value;
+    document.getElementById('mpv-chip1').textContent = s1name + ' ' + s1hex;
+    document.getElementById('mpv-chip2').textContent = s2name + ' ' + s2hex;
+  }
+
+  function openModal() {
+    syncSummary();
+    renderModalPreview();
+    successEl.style.display = 'none';
+    formEl.style.display    = 'flex';
+    statusEl.textContent    = '';
+    modal.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  openBtn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  doneBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+  // Submit handler
+  submitBtn.addEventListener('click', async () => {
+    const name    = document.getElementById('mf-name').value.trim();
+    const email   = document.getElementById('mf-email').value.trim();
+    const company = document.getElementById('mf-company').value.trim();
+    const qty     = document.getElementById('mf-qty').value.trim();
+    const msg     = document.getElementById('mf-msg').value.trim();
+
+    if (!name || !email || !qty) {
+      statusEl.textContent = 'Please fill in Name, Email, and Quantity.';
+      statusEl.style.color = '#c0392b';
+      return;
+    }
+
+    const s1name = document.getElementById('property-string-one-name').value;
+    const s1hex  = document.getElementById('property-string-one-hex').value;
+    const s2name = document.getElementById('property-string-two-name').value;
+    const s2hex  = document.getElementById('property-string-two-hex').value;
+    const style  = document.getElementById('property-bracelet-style').value;
+
+    // Snapshot as base64
+    const snapshot = document.getElementById('canvas-snapshot').toDataURL('image/jpeg', 0.85);
+
+    submitBtn.disabled = true;
+    statusEl.textContent = 'Sending…';
+    statusEl.style.color = 'var(--muted)';
+
+    // ── EmailJS send ──
+    // Replace YOUR_SERVICE_ID, YOUR_TEMPLATE_ID, YOUR_PUBLIC_KEY with your EmailJS credentials
+    const SERVICE_ID  = 'YOUR_SERVICE_ID';
+    const TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+    const PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+
+    const templateParams = {
+      to_email:    'corporate@4ocean.com',   // ← change to the 4ocean team email
+      from_name:   name,
+      from_email:  email,
+      company:     company || 'N/A',
+      quantity:    qty,
+      style:       style,
+      string1:     s1name + ' (' + s1hex + ')',
+      string2:     s2name + ' (' + s2hex + ')',
+      message:     msg || 'None',
+      bracelet_img: snapshot,
+    };
+
+    try {
+      // Load EmailJS if not already loaded
+      if (!window.emailjs) {
+        await new Promise((res, rej) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+          s.onload = res; s.onerror = rej;
+          document.head.appendChild(s);
+        });
+        emailjs.init({ publicKey: PUBLIC_KEY });
+      }
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
+
+      // Success
+      formEl.style.display    = 'none';
+      successEl.style.display = 'flex';
+      document.getElementById('success-email').textContent = email;
+
+    } catch(err) {
+      console.error('EmailJS error:', err);
+      // Fallback: open mailto
+      const body = encodeURIComponent(
+        `Name: ${name}
+Email: ${email}
+Company: ${company}
+Quantity: ${qty}
+` +
+        `Style: ${style}
+String 1: ${s1name} (${s1hex})
+String 2: ${s2name} (${s2hex})
+
+${msg}`
+      );
+      window.location.href = `mailto:corporate@4ocean.com?subject=Custom Bracelet Quote Request — ${qty} units&body=${body}`;
+      statusEl.textContent = 'Opening your email client as fallback…';
+    }
+
+    submitBtn.disabled = false;
+  });
+
+  // Keep summary in sync whenever a color is picked
+  document.addEventListener('bracelet-color-change', syncSummary);
+  } // end init
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
+// Patch animateColor to also dispatch the 3D event
+const _origAnimateColor = animateColor;
+animateColor = function(role, hex) {
+  _origAnimateColor(role, hex);
+  document.dispatchEvent(new CustomEvent('bracelet-color-change', { detail: { role, hex } }));
+};
+// Apply defaults to 3D on load
+setTimeout(() => {
+  document.dispatchEvent(new CustomEvent('bracelet-color-change', { detail: { role:'one', hex:'#74D1EA' } }));
+  document.dispatchEvent(new CustomEvent('bracelet-color-change', { detail: { role:'two', hex:'#E8B3C3' } }));
+}, 100);
+
+// ── PostMessage bridge to parent wrapper ──────────────────────────────────────
+(function() {
+  // Broadcast height to parent so iframe auto-sizes
+  function broadcastHeight() {
+    const h = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: 'bracelet-height', height: h }, '*');
+  }
+  // Broadcast on load and whenever DOM changes
+  window.addEventListener('load', broadcastHeight);
+  new ResizeObserver(broadcastHeight).observe(document.body);
+  setTimeout(broadcastHeight, 500);
+  setTimeout(broadcastHeight, 1500);
+  setTimeout(broadcastHeight, 3000);
+
+  // Broadcast color selections upward when user picks a color
+  const COLOR_MAP = {
+    '#5C0A1A':'Merlot','#A01220':'Deep Red','#C93323':'Tomato','#7D1A2A':'Burgundy',
+    '#B84121':'Rust','#D4542A':'Coral','#E06B22':'Tangerine','#E8921A':'Amber',
+    '#EBA525':'Marigold','#F2C325':'Sunflower','#F0D43A':'Lemon','#C8D43A':'Chartreuse',
+    '#C4286E':'Fuchsia','#E87BA8':'Blush','#C43070':'Magenta','#E8B3C3':'Rose Quartz',
+    '#D4BB94':'Sand','#C0A06E':'Tan','#B07840':'Caramel','#6E4020':'Chocolate',
+    '#7DB83C':'Lime','#C8C8C8':'Silver','#C0C4C8':'Light Gray','#8090A0':'Steel',
+    '#1A1A1A':'Black','transparent':'Transparent',
+    '#5A2882':'Violet','#1A2F6E':'Navy','#1A5BB8':'Royal Blue','#74D1EA':'Sky Blue',
+    '#A8D8F0':'Baby Blue','#007D8A':'Deep Teal','#1AA8B8':'Teal','#3AC8B0':'Mint',
+    '#1A5C28':'Forest','#6B8040':'Olive'
+  };
+
+  document.addEventListener('bracelet-color-change', e => {
+    const hex = e.detail.hex;
+    const name = COLOR_MAP[hex] || hex;
+    window.parent.postMessage({
+      type: 'bracelet-selection',
+      [e.detail.role === 'one' ? 's1' : 's2']: { name, hex }
+    }, '*');
+  });
+
+  // Also broadcast style changes
+  document.querySelectorAll('.style-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setTimeout(() => {
+        const sel = document.getElementById('selected-style');
+        if (sel) window.parent.postMessage({ type:'bracelet-selection', style: sel.textContent }, '*');
+      }, 50);
+    });
+  });
+})();
+</script>
+</body>
+</html>
