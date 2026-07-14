@@ -1199,6 +1199,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader }    from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader }   from 'three/addons/loaders/DRACOLoader.js';
 
 const canvas   = document.getElementById('canvas3d');
 const wrap     = document.getElementById('canvas-3d-wrap');
@@ -1248,24 +1249,29 @@ function onPartLoaded() { if (++loadedCount === 4) { loading.style.display='none
 const matCharm = new THREE.MeshStandardMaterial({ color: 0xC0C4CC, metalness: 0.9, roughness: 0.12 });
 
 // Base path — same folder as this HTML (bracelet_parts/)
-const BASE = 'https://cdn.shopify.com/3d/models/cd76e9dc2e904d60/';
+const BASE = '';
 
-loader.load('https://cdn.shopify.com/3d/models/cd76e9dc2e904d60/tex_beads.glb', g => {
+// Draco decoder for compressed GLBs
+const draco = new DRACOLoader();
+draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/libs/draco/');
+loader.setDRACOLoader(draco);
+
+loader.load('https://cdn.shopify.com/3d/models/d392274b6d665033/tex_beads.glb', g => {
   scene.add(g.scene); onPartLoaded();
 }, undefined, e => { console.error('beads',e); onPartLoaded(); });
 
-loader.load('https://cdn.shopify.com/3d/models/d13841b4d0211383/tex_string_blue.glb', g => {
+loader.load('https://cdn.shopify.com/3d/models/9b34ec1b0e8f50ea/tex_string_blue.glb', g => {
   g.scene.traverse(c => { if (c.isMesh) c.material = matStr1; });
   scene.add(g.scene); onPartLoaded();
 }, undefined, e => { console.error('str1',e); onPartLoaded(); });
 
-loader.load('https://cdn.shopify.com/3d/models/c650d712b434063e/tex_string_white.glb', g => {
+loader.load('https://cdn.shopify.com/3d/models/339ce3eff86ff5f5/tex_string_white.glb', g => {
   g.scene.traverse(c => { if (c.isMesh) c.material = matStr2; });
   scene.add(g.scene); onPartLoaded();
 }, undefined, e => { console.error('str2',e); onPartLoaded(); });
 
 // Fixed silver charm
-loader.load('https://cdn.shopify.com/3d/models/35adcc79903db3c4/tex_charm.glb', g => {
+loader.load('https://cdn.shopify.com/3d/models/06cde034be5cc3d2/tex_charm.glb', g => {
   g.scene.traverse(c => { if (c.isMesh) c.material = matCharm; });
   scene.add(g.scene); onPartLoaded();
 }, undefined, e => { console.error('charm',e); onPartLoaded(); });
@@ -1493,12 +1499,13 @@ function syncSummary() {
 
   function openModal() {
     syncSummary();
-    renderModalPreview();
     successEl.style.display = 'none';
     formEl.style.display    = 'flex';
     statusEl.textContent    = '';
     modal.classList.add('is-open');
     document.body.style.overflow = 'hidden';
+    // Defer preview render until modal is visible so clientWidth/clientHeight are non-zero
+    requestAnimationFrame(() => requestAnimationFrame(() => renderModalPreview()));
   }
 
   function closeModal() {
@@ -1632,6 +1639,25 @@ setTimeout(() => {
   setTimeout(broadcastHeight, 500);
   setTimeout(broadcastHeight, 1500);
   setTimeout(broadcastHeight, 3000);
+
+  // Listen for snapshot request from parent wrapper
+  window.addEventListener('message', function(e) {
+    if (!e.data || e.data.type !== 'snapshot-request') return;
+    // Snap camera to front-facing position
+    if (window._brCamera && window._brControls) {
+      window._brControls.autoRotate = false;
+      window._brCamera.position.set(0, 0.0, 4.2);
+      window._brCamera.lookAt(0, 0.0, 0);
+      window._brControls.target.set(0, 0.0, 0);
+      window._brCamera.fov = 38;
+      window._brCamera.updateProjectionMatrix();
+      window._brControls.update();
+    }
+    if (window._brRenderer) window._brRenderer.render(window._brScene, window._brCamera);
+    const canvas = document.getElementById('canvas3d');
+    const dataUrl = canvas ? canvas.toDataURL('image/jpeg', 0.9) : null;
+    window.parent.postMessage({ type: 'snapshot-response', dataUrl: dataUrl }, '*');
+  });
 
   // Broadcast color selections upward when user picks a color
   const COLOR_MAP = {
