@@ -710,7 +710,7 @@
 
       <aside class="preview-panel">
         <p class="preview-title">Your 3D bracelet preview</p>
-        <p class="preview-subtitle" id="preview-subtitle">Rotate the bracelet to view the fixed 4ocean charm and the smaller blank engraving charm.</p>
+        <p class="preview-subtitle" id="preview-subtitle">Rotate the bracelet to view the fixed 4ocean charm.</p>
         <!-- 3D Canvas (default) -->
         <div class="canvas-3d-wrap" id="canvas-3d-wrap">
           <canvas id="canvas3d"></canvas>
@@ -718,7 +718,7 @@
             <div class="canvas-spinner"></div>
             <span>Loading 3D bracelet…</span>
           </div>
-          <div class="canvas-hint">Drag to rotate · Scroll to zoom · Small disc shows engraving charm</div>
+          <div class="canvas-hint">Drag to rotate · Scroll to zoom</div>
         </div>
         <div class="detail-card">
           <div class="detail-head">
@@ -834,11 +834,11 @@
   const styleMeta = {
     beaded: {
       label: 'Clear Bead Bracelet',
-      subtitle: 'Rotate the bracelet to view the fixed 4ocean charm and the smaller blank engraving charm.'
+      subtitle: 'Rotate the bracelet to view the fixed 4ocean charm.'
     },
     braided: {
       label: 'Double Braided Bracelet',
-      subtitle: 'Rotate the bracelet to view the fixed 4ocean charm and the smaller blank engraving charm.'
+      subtitle: 'Rotate the bracelet to view the fixed 4ocean charm.'
     }
   };
 
@@ -1125,108 +1125,6 @@ loader.load('https://cdn.shopify.com/3d/models/339ce3eff86ff5f5/tex_string_white
 loader.load('https://cdn.shopify.com/3d/models/06cde034be5cc3d2/tex_charm.glb?v=432323', g => {
   prepareModel(g.scene, matCharm);
   scene.add(g.scene);
-
-  // Smaller engraved-disc charm.
-  // Attach it to the main charm group so it looks physically connected
-  // instead of floating independently in world space.
-  const engravingCharm = new THREE.Group();
-  engravingCharm.name = 'secondary-engraving-charm';
-
-  const discBodyMat = new THREE.MeshPhysicalMaterial({
-    color: 0xd8dee5,
-    metalness: 1,
-    roughness: 0.20,
-    clearcoat: 0.28,
-    clearcoatRoughness: 0.12,
-    reflectivity: 0.96,
-    side: THREE.DoubleSide
-  });
-
-  // Main disc body — slightly thicker and darker so it does not look blank.
-  const disc = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.072, 0.072, 0.024, 64, 1, false),
-    discBodyMat
-  );
-  disc.rotation.x = Math.PI / 2;
-  disc.castShadow = true;
-  disc.receiveShadow = true;
-  engravingCharm.add(disc);
-
-  // Front face plate adds visible fill and definition.
-  const discFront = new THREE.Mesh(
-    new THREE.CircleGeometry(0.060, 64),
-    new THREE.MeshPhysicalMaterial({
-      color: 0xc7d0d8,
-      metalness: 0.98,
-      roughness: 0.28,
-      side: THREE.DoubleSide
-    })
-  );
-  discFront.position.z = 0.0132;
-  discFront.castShadow = true;
-  engravingCharm.add(discFront);
-
-  // Subtle inset ring on the front.
-  const faceInset = new THREE.Mesh(
-    new THREE.RingGeometry(0.046, 0.055, 64),
-    new THREE.MeshPhysicalMaterial({
-      color: 0xbfc8d0,
-      metalness: 0.96,
-      roughness: 0.34,
-      side: THREE.DoubleSide
-    })
-  );
-  faceInset.position.z = 0.0138;
-  faceInset.castShadow = true;
-  engravingCharm.add(faceInset);
-
-  // Built-in top loop on the small charm.
-  const topLoop = new THREE.Mesh(
-    new THREE.TorusGeometry(0.018, 0.0055, 18, 56),
-    matEngravingCharm
-  );
-  topLoop.position.set(0, 0.084, 0);
-  topLoop.rotation.set(Math.PI / 2, 0.0, 0.0);
-  topLoop.castShadow = true;
-  engravingCharm.add(topLoop);
-
-  // Interlocking jump ring between small charm and the upper connector.
-  const lowerJumpRing = new THREE.Mesh(
-    new THREE.TorusGeometry(0.018, 0.005, 18, 56),
-    matEngravingCharm
-  );
-  lowerJumpRing.position.set(0, 0.108, 0.002);
-  lowerJumpRing.rotation.set(0.10, Math.PI / 2, 0.20);
-  lowerJumpRing.castShadow = true;
-  engravingCharm.add(lowerJumpRing);
-
-  // Upper attachment ring.
-  const upperJumpRing = new THREE.Mesh(
-    new THREE.TorusGeometry(0.020, 0.0055, 18, 56),
-    matEngravingCharm
-  );
-  upperJumpRing.position.set(0.004, 0.134, 0.006);
-  upperJumpRing.rotation.set(Math.PI / 2, 0.18, -0.08);
-  upperJumpRing.castShadow = true;
-  engravingCharm.add(upperJumpRing);
-
-  // Small metal link leading toward the main charm hardware so the connection
-  // reads clearly from the front angle.
-  const linkBar = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.0045, 0.0045, 0.052, 14),
-    matEngravingCharm
-  );
-  linkBar.position.set(0.020, 0.154, 0.012);
-  linkBar.rotation.set(0.20, 0.08, -0.70);
-  linkBar.castShadow = true;
-  engravingCharm.add(linkBar);
-
-  // IMPORTANT:
-  // Attach this charm to the main charm group, not directly to the scene.
-  // This makes it hang from the main bracelet hardware and keeps it visually attached.
-  engravingCharm.position.set(0.140, 0.060, 0.016);
-  engravingCharm.rotation.set(0.06, 0.28, -0.16);
-  g.scene.add(engravingCharm);
 
   onPartLoaded();
 }, undefined, e => { console.error('charm', e); onPartLoaded(); });
