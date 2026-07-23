@@ -1,11 +1,20 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>4ocean Corporate Gifting — Custom Bracelet</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Corporate bracelet gifting configurator with bracelet, engraving, packaging, and order review steps.">
+  <title>Corporate Bracelet Gifting Configurator</title>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-width: 320px; background: #f4f7f8; }
+    button, input, textarea { font: inherit; }
+    img, canvas, iframe { max-width: 100%; }
+  </style>
+</head>
+<body>
 <style>
-:root {
+#ocean-gifting-flow {
   --blue: #0057B8;
   --teal: #007D8A;
   --ink: #111;
@@ -15,8 +24,8 @@
   --panel: #ffffff;
   --radius: 28px;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color: var(--ink); }
+#ocean-gifting-flow, #ocean-gifting-flow *, #ocean-gifting-flow *::before, #ocean-gifting-flow *::after { box-sizing: border-box; }
+#ocean-gifting-flow { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color: var(--ink); width: 100%; overflow: clip; }
 
 /* ── Flow header ── */
 .flow-header {
@@ -187,8 +196,8 @@ body { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color
 .order-summary-head {
   background: var(--ink); color: #fff; padding: 24px 28px 20px;
 }
-.order-summary-head h3 { font-size: 20px; font-weight: 900; letter-spacing: -.02em; }
-.order-summary-head p { font-size: 13px; color: rgba(255,255,255,.55); margin-top: 4px; }
+.order-summary-head h3 { font-size: 20px; font-weight: 900; letter-spacing: -.02em; color: #fff; }
+.order-summary-head p { font-size: 13px; color: rgb(255, 255, 255); margin-top: 4px; }
 .order-rows { padding: 20px 28px; display: flex; flex-direction: column; gap: 2px; }
 .order-row {
   display: flex; justify-content: space-between; align-items: center;
@@ -197,7 +206,7 @@ body { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color
 }
 .order-row:last-child { border-bottom: none; }
 .order-key { color: var(--muted); font-weight: 600; }
-.order-val { font-weight: 800; display: flex; align-items: center; gap: 7px; }
+.order-val { font-weight: 800; display: flex; align-items: center; gap: 7px; text-align: end; }
 .order-val.empty { color: #ccc; font-weight: 400; font-style: italic; }
 .order-dot {
   width: 14px; height: 14px; border-radius: 50%;
@@ -360,9 +369,20 @@ body { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color
   .step-card-header { flex-direction: column; }
   .flow-body { padding: 20px 16px 60px; }
 }
+
+/* PageFly containment and stable layout */
+#ocean-gifting-flow .step-section { scroll-margin-top: 110px; }
+#ocean-gifting-flow #bracelet-iframe { height: 1150px !important; }
+#ocean-gifting-flow #charm-stage { aspect-ratio: 1 / 1; min-height: 0 !important; }
+#ocean-gifting-flow #charm-canvas { width: 100%; height: 100%; display: block; }
+@media (max-width: 640px) {
+  #ocean-gifting-flow #bracelet-iframe { height: 1050px !important; }
+  #ocean-gifting-flow #charm-body,
+  #ocean-gifting-flow #pkg-body { grid-template-columns: 1fr !important; padding: 18px !important; }
+}
+
 </style>
-</head>
-<body>
+<div id="ocean-gifting-flow">
 
 <!-- ── STICKY HEADER ── -->
 <header class="flow-header">
@@ -416,10 +436,10 @@ body { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color
   </div>
   <iframe
     id="bracelet-iframe"
-    src="https://vivekgupta-star.github.io/bracelet-cofigurator/configurator_final-DEPLOY.html"
-    style="width:100%;border:none;border-radius:28px;box-shadow:0 18px 60px rgba(0,0,0,.08);height:1100px;display:block"
-    scrolling="no"
-    onload="syncIframeHeight(this)"
+    src="https://vivekgupta-star.github.io/bracelet-cofigurator/configurator_final-DEPLOY.html?v=43234455"
+    title="Bracelet configurator"
+    loading="eager"
+    style="width:100%;border:none;border-radius:28px;box-shadow:0 18px 60px rgba(0,0,0,.08);height:1150px;display:block"
   ></iframe>
   <style>
     /* Injected into parent — hides standalone quote CTA inside the iframe via postMessage trick below */
@@ -450,8 +470,12 @@ body { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color
     <!-- Charm body -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:30px;align-items:start" id="charm-body">
       <!-- Stage -->
-      <div id="charm-stage" style="position:relative;background:#0d1b2a;border-radius:18px;overflow:hidden;min-height:400px">
-        <div id="charm-3d-mount" style="width:100%;height:400px"></div>
+      <div>
+        <div id="charm-stage" style="position:relative;background:#0a1420;border-radius:18px;overflow:hidden;aspect-ratio:1/1">
+          <div id="charm-3d-mount" role="img" aria-label="Silver charm engraving preview" style="position:absolute;inset:0"></div>
+          <div id="charm-3d-loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:#8a97a8;font-size:14px;font-weight:700;pointer-events:none">Loading 3D charm…</div>
+        </div>
+        <p style="font-size:12px;color:#8a97a8;line-height:1.5;margin:12px 2px 0">Preview is a visual guide. Clean single-color logos and line art engrave best. Your original artwork is kept for production.</p>
       </div>
 
       <!-- Controls -->
@@ -483,11 +507,13 @@ body { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
             <span style="font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Logo size</span>
-            <span style="font-size:13px;font-weight:800" id="charm-size-val">55%</span>
+            <span style="font-size:13px;font-weight:800" id="charm-size-val">82%</span>
           </div>
-          <input type="range" id="charm-size" min="20" max="85" value="55" step="1"
+          <input type="range" id="charm-size" min="50" max="100" value="82" step="1"
             style="width:100%;accent-color:var(--blue)" oninput="redrawCharm();document.getElementById('charm-size-val').textContent=this.value+'%'">
         </div>
+
+        <p id="charm-status" style="font-size:12px;color:#c0392b;min-height:16px;margin:0"></p>
 
         <div style="background:var(--soft);border-radius:14px;padding:16px 18px">
           <div style="font-size:13px;font-weight:800;margin-bottom:6px">About the engraving</div>
@@ -697,17 +723,17 @@ body { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color
           <div class="qty-label">Quantity</div>
           <div class="qty-control">
             <button class="qty-btn" onclick="changeQty(-10)">−</button>
-            <div class="qty-num" id="qty-num">50</div>
+            <div class="qty-num test" id="qty-num">100</div>
             <button class="qty-btn" onclick="changeQty(10)">+</button>
           </div>
-          <p class="qty-min">Minimum 25 units · Bulk pricing available</p>
+          <p class="qty-min">Minimum 100 units · Bulk pricing available</p>
         </div>
 
         <div class="cta-block">
           <button class="cta-primary" onclick="openQuoteModal()">Request a quote</button>
           <div class="cta-divider">— OR —</div>
-          <button class="cta-secondary" onclick="handleAddToCart()">Add to cart</button>
-          <p class="cta-note">Add to cart requires Shopify product integration</p>
+          <button type="button" class="cta-secondary checkoutbtn" id="checkout-final-btn">Checkout</button>
+          <p class="cta-note" style="display:none;">Add to cart requires Shopify product integration</p>
         </div>
       </div>
 
@@ -733,7 +759,7 @@ body { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color
 <!-- ════════════════════════════════════════════════════ -->
 <!-- QUOTE MODAL                                         -->
 <!-- ════════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="quote-modal">
+<div class="modal-overlay custom-quote-sec" id="quote-modal">
   <div class="modal-card">
     <button class="modal-close" onclick="closeQuoteModal()">×</button>
     <div id="modal-form-wrap">
@@ -754,7 +780,7 @@ body { font-family: Arial, Helvetica, sans-serif; background: var(--soft); color
       <div class="mf-row"><label class="mf-label">Work email</label><input class="mf-input" id="q-email" placeholder="alex@company.com" type="email"></div>
       <div class="mf-row"><label class="mf-label">Company</label><input class="mf-input" id="q-company" placeholder="Acme Corp" type="text"></div>
       <div class="mf-2col">
-        <div class="mf-row"><label class="mf-label">Quantity</label><input class="mf-input" id="q-qty" type="number" min="25" value="50"></div>
+        <div class="mf-row"><label class="mf-label">Quantity</label><input class="mf-input" id="q-qty" type="number" min="100" value="100"></div>
         <div class="mf-row"><label class="mf-label">Needed by</label><input class="mf-input" id="q-date" placeholder="e.g. Dec 2026" type="text"></div>
       </div>
       <div class="mf-row"><label class="mf-label">Notes</label><textarea class="mf-input mf-textarea" id="q-notes" placeholder="Budget range, delivery address, special requests…"></textarea></div>
@@ -777,61 +803,58 @@ const ST = {
   s2: { name: 'Rose Quartz',  hex: '#E8B3C3' },
   charmSkipped: false,  charmFile: null,
   pkgSkipped: false,    pkgFile: null,
-  qty: 50
+  qty: 100
 };
 
 // ── Navigation ────────────────────────────────────────────────────────────────
+const STEP_SCROLL_OFFSET = 110;
+
+function scrollToFlowStep(n) {
+  const target = document.getElementById('step-' + n);
+  if (!target) return;
+
+  // Wait until display:block has been painted before measuring the new step.
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const top = window.pageYOffset + target.getBoundingClientRect().top - STEP_SCROLL_OFFSET;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  }));
+}
+
 function goToStep(n) {
-  document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
-  document.getElementById('step-' + n).classList.add('active');
-  document.querySelectorAll('.step-pill').forEach(p => {
-    const s = parseInt(p.dataset.step);
+  document.querySelectorAll('#ocean-gifting-flow .step-section').forEach(s => s.classList.remove('active'));
+  const nextStep = document.getElementById('step-' + n);
+  if (!nextStep) return;
+  nextStep.classList.add('active');
+
+  document.querySelectorAll('#ocean-gifting-flow .step-pill').forEach(p => {
+    const s = parseInt(p.dataset.step, 10);
     p.classList.toggle('active', s === n);
     p.classList.toggle('done', s < n);
   });
+
   ST.step = n;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
   if (n === 4) refreshStep4();
   if (n === 2) maybeInitCharm();
+  if (n === 3 && pkgFabric) pkgFabric.requestRenderAll();
+  scrollToFlowStep(n);
 }
 
-// ── Iframe height auto-resize ─────────────────────────────────────────────────
-function syncIframeHeight(iframe) {
-  // Check if server is reachable
-  iframe.onerror = () => { document.getElementById('server-warning').style.display = ''; };
+// ── Bracelet iframe messaging (height stays fixed to prevent PageFly layout shift) ──
+let braceletMessagingReady = false;
+function initBraceletMessaging() {
+  if (braceletMessagingReady) return;
+  braceletMessagingReady = true;
 
-  // Auto-size using polling (cross-origin safe via try/catch)
-  function resize() {
-    try {
-      const h = iframe.contentDocument.documentElement.scrollHeight;
-      if (h > 200) {
-        iframe.style.height = (h + 40) + 'px';
-      }
-    } catch(e) {
-      // Cross-origin or not loaded yet - use fixed height
-      iframe.style.height = '1150px';
-    }
-  }
-  resize();
-  // Poll every 500ms for first 10 seconds (3D model loads async)
-  let polls = 0;
-  const t = setInterval(() => {
-    resize();
-    if (++polls > 20) clearInterval(t);
-  }, 500);
-
-  // Listen for postMessage from the bracelet configurator
   window.addEventListener('message', e => {
     if (!e.data) return;
     if (e.data.type === 'bracelet-selection') {
-      if (e.data.s1) { ST.s1 = e.data.s1; }
-      if (e.data.s2) { ST.s2 = e.data.s2; }
-      if (e.data.style) { ST.style = e.data.style; }
+      if (e.data.s1) ST.s1 = e.data.s1;
+      if (e.data.s2) ST.s2 = e.data.s2;
+      if (e.data.style) ST.style = e.data.style;
       updateHeaderSummary();
     }
-    if (e.data.type === 'bracelet-height') {
-      iframe.style.height = (e.data.height + 40) + 'px';
-    }
+    // Deliberately ignore repeated bracelet-height messages. The iframe uses a
+    // stable CSS height so PageFly does not jump while its 3D assets initialize.
   });
 }
 
@@ -871,7 +894,7 @@ function unskipStep(n) {
 
 // ── Qty ───────────────────────────────────────────────────────────────────────
 function changeQty(delta) {
-  ST.qty = Math.max(25, ST.qty + delta);
+  ST.qty = Math.max(100, ST.qty + delta);
   document.getElementById('qty-num').textContent = ST.qty;
   document.getElementById('q-qty').value = ST.qty;
 }
@@ -907,17 +930,32 @@ function refreshStep4() {
 
   const pkgEl = document.getElementById('sum-pkg');
   const recapPkg = document.getElementById('recap-pkg-detail');
-  if (ST.pkgSkipped) {
-    pkgEl.textContent = 'Skipped'; pkgEl.className = 'order-val empty';
-    recapPkg.textContent = 'Skipped — standard packaging';
-    document.querySelector('#recap-3 .recap-step-num').style.background = '#ddd';
-    document.querySelector('#recap-3 .recap-step-num').style.color = '#999';
-  } else if (ST.pkgFile) {
-    pkgEl.textContent = '✓ Graphic uploaded'; pkgEl.className = 'order-val';
+  // if (ST.pkgSkipped) {
+  //   pkgEl.textContent = 'Skipped'; pkgEl.className = 'order-val empty';
+  //   recapPkg.textContent = 'Skipped — standard packaging';
+  //   document.querySelector('#recap-3 .recap-step-num').style.background = '#ddd';
+  //   document.querySelector('#recap-3 .recap-step-num').style.color = '#999';
+  // } else if (ST.pkgFile) {
+  //   pkgEl.textContent = '✓ Graphic uploaded'; pkgEl.className = 'order-val';
+  //   recapPkg.textContent = 'Brand graphic: ' + ST.pkgFile.name;
+  // } else {
+  //   pkgEl.textContent = 'Not added'; pkgEl.className = 'order-val empty';
+  //   recapPkg.textContent = 'No graphic uploaded';
+  // }
+  const packagingMessage =
+  'Our design team will create your custom packaging mockup and email it to you for approval within 24 hours.';
+
+  if (ST.pkgFile) {
+    pkgEl.textContent = '✓ Graphic uploaded';
+    pkgEl.className = 'order-val';
     recapPkg.textContent = 'Brand graphic: ' + ST.pkgFile.name;
   } else {
-    pkgEl.textContent = 'Not added'; pkgEl.className = 'order-val empty';
-    recapPkg.textContent = 'No graphic uploaded';
+    pkgEl.textContent = 'Design assistance included';
+    pkgEl.className = 'order-val';
+    recapPkg.textContent = packagingMessage;
+
+    document.querySelector('#recap-3 .recap-step-num').style.background = '';
+    document.querySelector('#recap-3 .recap-step-num').style.color = '';
   }
 
   document.getElementById('qty-num').textContent = ST.qty;
@@ -935,11 +973,14 @@ function openQuoteModal() {
   document.getElementById('modal-form-wrap').style.display = '';
   document.getElementById('modal-success').style.display = 'none';
   document.getElementById('quote-modal').classList.add('is-open');
+  document.querySelector('.custom-quote-sec').classList.add('is-open');
   document.body.style.overflow = 'hidden';
-  renderModalCanvas();
+  requestAnimationFrame(() => requestAnimationFrame(() => renderModalCanvas()));
 }
+
 function closeQuoteModal() {
   document.getElementById('quote-modal').classList.remove('is-open');
+  document.querySelector('.custom-quote-sec').classList.remove('is-open');
   document.body.style.overflow = '';
 }
 document.getElementById('quote-modal').addEventListener('click', e => {
@@ -947,31 +988,41 @@ document.getElementById('quote-modal').addEventListener('click', e => {
 });
 
 function renderModalCanvas() {
-  // Draw a simple flat bracelet using the chosen colors
-  const canvas = document.getElementById('modal-canvas');
-  const snap = document.getElementById('modal-snapshot');
-  canvas.width = snap.clientWidth || 480;
-  canvas.height = snap.clientHeight || 180;
-  const c = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  c.fillStyle = '#0d1b2a';
-  c.fillRect(0,0,W,H);
-  // Draw ellipse bracelet
-  c.save();
-  c.translate(W/2, H/2 + 8);
-  c.scale(1, 0.42);
-  c.beginPath();
-  c.arc(0, 0, W*0.34, 0, Math.PI*2);
-  c.strokeStyle = ST.s1.hex === 'transparent' ? 'rgba(200,200,200,0.5)' : ST.s1.hex;
-  c.lineWidth = 14;
-  c.stroke();
-  c.beginPath();
-  c.arc(0, 0, W*0.34, 0, Math.PI*2);
-  c.strokeStyle = ST.s2.hex === 'transparent' ? 'rgba(200,200,200,0.5)' : ST.s2.hex;
-  c.lineWidth = 7;
-  c.setLineDash([14,14]);
-  c.stroke();
-  c.restore();
+  // Request a real 3D snapshot from the bracelet iframe
+  const iframe = document.getElementById('bracelet-iframe');
+  if (!iframe || !iframe.contentWindow) return;
+
+  // One-time listener for the response
+  function onSnapshot(e) {
+    if (!e.data || e.data.type !== 'snapshot-response') return;
+    window.removeEventListener('message', onSnapshot);
+    if (!e.data.dataUrl) return;
+    const snap = document.getElementById('modal-snapshot');
+    const canvas = document.getElementById('modal-canvas');
+    canvas.width  = snap.clientWidth  || 480;
+    canvas.height = snap.clientHeight || 200;
+    const img = new Image();
+    img.onload = function() {
+      const c = canvas.getContext('2d');
+      c.fillStyle = '#0d1b2a';
+      c.fillRect(0, 0, canvas.width, canvas.height);
+      // Scale to fit, centered
+      const srcAspect = img.width / img.height;
+      const dstAspect = canvas.width / canvas.height;
+      let drawW, drawH, drawX, drawY;
+      if (dstAspect > srcAspect) {
+        drawH = canvas.height; drawW = drawH * srcAspect;
+        drawX = (canvas.width - drawW) / 2; drawY = 0;
+      } else {
+        drawW = canvas.width; drawH = drawW / srcAspect;
+        drawX = 0; drawY = (canvas.height - drawH) / 2;
+      }
+      c.drawImage(img, drawX, drawY, drawW, drawH);
+    };
+    img.src = e.data.dataUrl;
+  }
+  window.addEventListener('message', onSnapshot);
+  iframe.contentWindow.postMessage({ type: 'snapshot-request' }, '*');
 }
 
 function submitQuote() {
@@ -1002,236 +1053,722 @@ function submitQuote() {
   }, 800);
 }
 
-function handleAddToCart() {
-  alert('Add to Cart requires embedding this flow into a Shopify product page. Use "Request a quote" for now — it captures all the same information and your team can follow up with an invoice.');
-}
-
-// ── CHARM ENGRAVER — 3D Three.js ─────────────────────────────────────────────
-let charmInited = false;
-
-function maybeInitCharm() {
-  if (charmInited) return;
-  charmInited = true;
-  // Load Three.js UMD + addons, then init
-  function loadScript(src, cb) {
-    const s = document.createElement('script');
-    s.src = src; s.onload = cb;
-    document.head.appendChild(s);
+async function handleAddToCart(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
   }
-  loadScript('https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js', () => {
-    loadScript('https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js', () => {
-      loadScript('https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js', () => {
-        initCharm();
-      });
-    });
-  });
-}
-let charmRenderer, charmScene, charmCamera, charmControls;
-let charmMesh = null, charmLogoImg = null, charmLogoTex = null;
-let charmAnimId = null;
 
-function initCharm() {
-  const mount = document.getElementById('charm-3d-mount');
-  const W = mount.clientWidth || 400;
-  const H = 400;
+  const checkoutButton = document.getElementById('checkout-final-btn');
+  const variantId = '50374121849025';
+  const charmInput = document.getElementById('charm-file');
+  const printInput = document.getElementById('pkg-file');
 
-  charmRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-  charmRenderer.setSize(W, H);
-  charmRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  charmRenderer.setClearColor(0x0d1b2a, 1);
-  charmRenderer.outputEncoding = THREE.sRGBEncoding;
-  charmRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-  charmRenderer.toneMappingExposure = 1.4;
-  charmRenderer.domElement.style.cssText = 'display:block;width:100%;height:auto';
-  mount.appendChild(charmRenderer.domElement);
+  if (!ST.s1 || !ST.s2) {
+    alert('Please select both bracelet colors.');
+    goToStep(1);
+    return;
+  }
 
-  charmScene = new THREE.Scene();
-  charmCamera = new THREE.PerspectiveCamera(32, W/H, 0.01, 100);
-  charmCamera.position.set(0, 0, 3.2);
+  // Require the Step 2 artwork unless that step was intentionally skipped.
+  if (!ST.charmSkipped && (!charmInput || !charmInput.files.length)) {
+    alert('Please upload your logo or skip the charm engraving step.');
+    goToStep(2);
+    return;
+  }
 
-  charmControls = new THREE.OrbitControls(charmCamera, charmRenderer.domElement);
-  charmControls.enableDamping = true;
-  charmControls.dampingFactor = 0.08;
-  charmControls.minDistance = 1.5;
-  charmControls.maxDistance = 6;
-  charmControls.enablePan = false;
+  // Require the Step 3 print file unless that step was intentionally skipped.
+  // if (!ST.pkgSkipped && (!printInput || !printInput.files.length)) {
+  //  alert('Please upload your print file or skip the custom packaging step.');
+   // goToStep(3);
+   // return;
+  //}
 
-  // Lighting
-  charmScene.add(new THREE.AmbientLight(0xffffff, 0.9));
-  const key = new THREE.DirectionalLight(0xffffff, 2.0);
-  key.position.set(3, 5, 4); charmScene.add(key);
-  const fill = new THREE.DirectionalLight(0xd0e8ff, 0.6);
-  fill.position.set(-3, 2, 2); charmScene.add(fill);
-  const rim = new THREE.DirectionalLight(0xffffff, 0.4);
-  rim.position.set(0, -3, -3); charmScene.add(rim);
+  const formData = new FormData();
+  formData.append('id', variantId);
+  formData.append('quantity', String(ST.qty || 1));
 
-  // Load charm GLB
-  const loader = new THREE.GLTFLoader();
-  loader.load('https://cdn.shopify.com/3d/models/35adcc79903db3c4/tex_charm.glb', gltf => {
-    const model = gltf.scene;
-    const box = new THREE.Box3().setFromObject(model);
-    const center = box.getCenter(new THREE.Vector3());
-    const size = box.getSize(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z);
-    model.position.sub(center);
-    model.scale.setScalar(2.2 / maxDim);
+  formData.append('properties[Bracelet Style]', ST.style || '');
+  formData.append('properties[Color 1]', `${ST.s1.name} ${ST.s1.hex}`);
+  formData.append('properties[Color 2]', `${ST.s2.name} ${ST.s2.hex}`);
 
-    model.traverse(o => {
-      if (o.isMesh) {
-        charmMesh = o;
-        o.material = new THREE.MeshStandardMaterial({
-          color: 0xc8cdd4,
-          metalness: 0.92,
-          roughness: 0.12,
-        });
+  if (ST.charmSkipped) {
+    formData.append('properties[Charm Engraving]', 'Skipped');
+  } else {
+    formData.append('properties[_Charm Logo]', charmInput.files[0], charmInput.files[0].name);
+  }
+
+  // if (ST.pkgSkipped) {
+  //   formData.append('properties[Custom Packaging]', 'Skipped');
+  // } else {
+  //   formData.append('properties[_Package Art]', printInput.files[0], printInput.files[0].name);
+  // }
+
+  if (printInput && printInput.files.length) {
+    formData.append('properties[_Package Art]', printInput.files[0], printInput.files[0].name);
+  } else {
+      formData.append('properties[Custom Packaging]', 'Not Added');
+  }
+
+  try {
+    if (checkoutButton) {
+      checkoutButton.disabled = true;
+      checkoutButton.dataset.originalText = checkoutButton.textContent;
+      checkoutButton.textContent = 'Adding…';
+    }
+
+    const cartRoot = window.Shopify && window.Shopify.routes && window.Shopify.routes.root
+      ? window.Shopify.routes.root
+      : '/';
+
+    const response = await fetch(cartRoot + 'cart/add.js', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        Accept: 'application/json'
       }
     });
-    charmScene.add(model);
-    drawCharmHint();
-  }, undefined, err => {
-    console.error('Charm GLB load error:', err);
-    // Fallback: show a silver sphere
-    const geo = new THREE.SphereGeometry(1, 64, 64);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xc8cdd4, metalness: 0.9, roughness: 0.15 });
-    charmMesh = new THREE.Mesh(geo, mat);
-    charmScene.add(charmMesh);
-    drawCharmHint();
-  });
 
-  // Animate loop
-  (function animate() {
-    requestAnimationFrame(animate);
-    charmControls.update();
-    charmRenderer.render(charmScene, charmCamera);
-  })();
+    const result = await response.json().catch(() => ({}));
 
-  // File input listener
-  document.getElementById('charm-file').addEventListener('change', e => {
-    const f = e.target.files[0]; if (!f) return;
-    ST.charmFile = f;
-    document.getElementById('charm-chip-name').textContent = f.name;
-    document.getElementById('charm-chip').style.display = 'flex';
-    document.getElementById('charm-upload-zone').style.display = 'none';
-    const reader = new FileReader();
-    reader.onload = ev => {
-      charmLogoImg = new Image();
-      charmLogoImg.onload = () => applyLogoToCharm();
-      charmLogoImg.src = ev.target.result;
-    };
-    reader.readAsDataURL(f);
-  });
-}
+    if (!response.ok) {
+      throw new Error(result.description || result.message || 'The product could not be added to the cart.');
+    }
 
-function drawCharmHint() {
-  // Overlay hint text on the 3D canvas using a 2D overlay div
-  const existing = document.getElementById('charm-hint-overlay');
-  if (existing) existing.remove();
-  if (charmLogoImg) return;
-  const ov = document.createElement('div');
-  ov.id = 'charm-hint-overlay';
-  ov.style.cssText = 'position:absolute;bottom:18%;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;';
-  ov.innerHTML = '<div style="color:rgba(180,190,200,0.65);font-size:13px;font-weight:700;font-family:Arial;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,0.5)">Upload your logo<br>to preview it engraved</div>';
-  const stage = document.getElementById('charm-stage');
-  stage.style.position = 'relative';
-  stage.appendChild(ov);
-}
+    window.location.assign(cartRoot + 'checkout');
+  } catch (error) {
+    console.error('Custom bracelet cart error:', error);
+    alert(error.message || 'Something went wrong while adding the product. Please try again.');
 
-function applyLogoToCharm() {
-  if (!charmMesh || !charmLogoImg) return;
-
-  // Remove hint overlay
-  const hint = document.getElementById('charm-hint-overlay');
-  if (hint) hint.remove();
-
-  const pct = parseInt(document.getElementById('charm-size').value) / 100;
-  const texSize = 512;
-  const cv = document.createElement('canvas');
-  cv.width = texSize; cv.height = texSize;
-  const c = cv.getContext('2d');
-
-  // Silver base
-  const grad = c.createRadialGradient(texSize*0.38, texSize*0.32, 20, texSize/2, texSize/2, texSize*0.5);
-  grad.addColorStop(0, '#f0f2f5');
-  grad.addColorStop(0.4, '#d0d4da');
-  grad.addColorStop(1, '#b0b6be');
-  c.fillStyle = grad;
-  c.beginPath();
-  c.arc(texSize/2, texSize/2, texSize/2, 0, Math.PI*2);
-  c.fill();
-
-  // Logo engraved onto texture
-  const logoSize = texSize * 0.65 * pct;
-  const lw = charmLogoImg.naturalWidth, lh = charmLogoImg.naturalHeight;
-  const scale = Math.min(logoSize / lw, logoSize / lh);
-  const dw = lw * scale, dh = lh * scale;
-  const dx = texSize/2 - dw/2, dy = texSize/2 - dh/2;
-
-  // Offscreen to get pixel data
-  const tmp = document.createElement('canvas');
-  tmp.width = Math.ceil(dw); tmp.height = Math.ceil(dh);
-  const tc = tmp.getContext('2d');
-  tc.clearRect(0,0,tmp.width,tmp.height);
-  tc.drawImage(charmLogoImg, 0, 0, dw, dh);
-  const id = tc.getImageData(0,0,tmp.width,tmp.height), px = id.data;
-  for (let i=0; i<px.length; i+=4) {
-    const a = px[i+3]; if (a < 10) { px[i+3]=0; continue; }
-    const bright = (px[i]*0.299 + px[i+1]*0.587 + px[i+2]*0.114) / 255;
-    const depth = 1 - bright;
-    px[i]   = Math.round(130 - depth*80);
-    px[i+1] = Math.round(138 - depth*80);
-    px[i+2] = Math.round(148 - depth*80);
-    px[i+3] = Math.round(a * (0.1 + depth*0.85));
+    if (checkoutButton) {
+      checkoutButton.disabled = false;
+      checkoutButton.textContent = checkoutButton.dataset.originalText || 'Checkout';
+    }
   }
-  tc.putImageData(id,0,0);
+}
 
-  // Clip to circle on main canvas
-  c.save();
-  c.beginPath();
-  c.arc(texSize/2, texSize/2, texSize*0.45, 0, Math.PI*2);
-  c.clip();
-  c.globalCompositeOperation = 'multiply';
-  c.drawImage(tmp, dx, dy);
-  c.restore();
+// ── CHARM ENGRAVER — THREE.JS FRONT-FACING PREVIEW ────────────────────────────
+const CHARM_MODEL_URL = 'https://cdn.shopify.com/3d/models/06cde034be5cc3d2/tex_charm.glb';
+const CHARM_DRACO_DECODER_PATH = 'https://www.gstatic.com/draco/versioned/decoders/1.5.7/';
 
-  // Apply as texture to charm material
-  if (charmLogoTex) charmLogoTex.dispose();
-  charmLogoTex = new THREE.CanvasTexture(cv);
+let charmInited = false;
+let charmThreePromise = null;
+let charmScene = null;
+let charmCamera = null;
+let charmRenderer = null;
+let charmControls = null;
+let charmModelRoot = null;
+let charmModelBounds = null;
+let charmLogoImage = null;
+let charmLogoPlane = null;
+let charmResizeObserver = null;
+let charmAnimationFrame = 0;
+let charmUserMovedCamera = false;
 
-  charmMesh.material = new THREE.MeshStandardMaterial({
-    map: charmLogoTex,
-    metalness: 0.85,
-    roughness: 0.15,
-    envMapIntensity: 1.0,
+function loadCharmLibrary(id, src) {
+  return new Promise((resolve, reject) => {
+    const existing = document.getElementById(id);
+    if (existing) {
+      if (existing.dataset.loaded === '1') {
+        resolve();
+      } else {
+        existing.addEventListener('load', resolve, { once: true });
+        existing.addEventListener('error', reject, { once: true });
+      }
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.id = id;
+    script.src = src;
+    script.async = true;
+    script.onload = () => {
+      script.dataset.loaded = '1';
+      resolve();
+    };
+    script.onerror = () => reject(new Error('Could not load ' + src));
+    document.head.appendChild(script);
   });
-  charmMesh.material.needsUpdate = true;
+}
+
+async function ensureCharmThree() {
+  if (window.THREE && window.THREE.GLTFLoader && window.THREE.DRACOLoader && window.THREE.OrbitControls) {
+    return;
+  }
+
+  if (!charmThreePromise) {
+    charmThreePromise = (async () => {
+      if (!window.THREE) {
+        await loadCharmLibrary(
+          'ocean-three-core',
+          'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'
+        );
+      }
+
+      if (!window.THREE.GLTFLoader) {
+        await loadCharmLibrary(
+          'ocean-three-gltf-loader',
+          'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js'
+        );
+      }
+
+      if (!window.THREE.DRACOLoader) {
+        await loadCharmLibrary(
+          'ocean-three-draco-loader',
+          'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js'
+        );
+      }
+
+      if (!window.THREE.OrbitControls) {
+        await loadCharmLibrary(
+          'ocean-three-orbit-controls',
+          'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js'
+        );
+      }
+    })();
+  }
+
+  return charmThreePromise;
+}
+
+function setCharmStatus(message, isError = false) {
+  const status = document.getElementById('charm-status');
+  if (!status) return;
+  status.textContent = message || '';
+  status.style.color = isError ? '#c0392b' : '#5a6b82';
+}
+
+function setCharmLoading(message, visible = true) {
+  const loading = document.getElementById('charm-3d-loading');
+  if (!loading) return;
+  loading.textContent = message || '';
+  loading.style.display = visible ? 'flex' : 'none';
+}
+
+function maybeInitCharm() {
+  const fileInput = document.getElementById('charm-file');
+  const sizeInput = document.getElementById('charm-size');
+
+  if (!fileInput || !sizeInput) return;
+
+  if (!charmInited) {
+    charmInited = true;
+
+    fileInput.addEventListener('change', event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) setCharmLogoFile(file);
+    });
+
+    sizeInput.addEventListener('input', () => {
+      document.getElementById('charm-size-val').textContent = sizeInput.value + '%';
+      updateCharmLogoPlane();
+    });
+
+    initCharmThreeViewer();
+  } else {
+    resizeCharmRenderer();
+    if (charmRenderer && charmScene && charmCamera) {
+      charmRenderer.render(charmScene, charmCamera);
+    }
+  }
+}
+
+async function initCharmThreeViewer() {
+  const mount = document.getElementById('charm-3d-mount');
+  if (!mount) return;
+
+  try {
+    setCharmLoading('Loading 3D charm…', true);
+    setCharmStatus('');
+    await ensureCharmThree();
+
+    const THREE = window.THREE;
+
+    mount.innerHTML = '';
+    charmScene = new THREE.Scene();
+    charmScene.background = new THREE.Color(0x0a1420);
+
+    charmCamera = new THREE.PerspectiveCamera(34, 1, 0.001, 100);
+    charmCamera.position.set(0, 0, 4);
+    charmCamera.up.set(0, 1, 0);
+
+    charmRenderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: false,
+      powerPreference: 'high-performance'
+    });
+    charmRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    charmRenderer.outputEncoding = THREE.sRGBEncoding;
+    charmRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+    charmRenderer.toneMappingExposure = 1.25;
+    charmRenderer.setClearColor(0x0a1420, 1);
+    mount.appendChild(charmRenderer.domElement);
+
+    charmControls = new THREE.OrbitControls(charmCamera, charmRenderer.domElement);
+    charmControls.enableDamping = true;
+    charmControls.dampingFactor = 0.08;
+    charmControls.enablePan = false;
+    charmControls.rotateSpeed = 0.65;
+    charmControls.zoomSpeed = 0.8;
+    charmControls.addEventListener('start', () => {
+      charmUserMovedCamera = true;
+    });
+
+    charmScene.add(new THREE.HemisphereLight(0xffffff, 0x152436, 1.35));
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.0);
+    keyLight.position.set(3.5, 4.5, 5.5);
+    charmScene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0x8fc9ff, 1.4);
+    fillLight.position.set(-4, 1.5, 4);
+    charmScene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    rimLight.position.set(1, -4, -3);
+    charmScene.add(rimLight);
+
+    resizeCharmRenderer();
+
+    const dracoLoader = new THREE.DRACOLoader();
+    dracoLoader.setDecoderPath(CHARM_DRACO_DECODER_PATH);
+    dracoLoader.setDecoderConfig({ type: 'js' });
+
+    const loader = new THREE.GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+
+    loader.load(
+      CHARM_MODEL_URL,
+      gltf => {
+        if (charmModelRoot) {
+          charmScene.remove(charmModelRoot);
+        }
+
+        const model = gltf.scene;
+
+        /*
+         * The Shopify GLB is already authored with its broad charm face in the
+         * XY plane. The old preview rotated it 90 degrees around Y, which made
+         * it appear as the thin edge shown in the screenshot. Keep all model
+         * rotations at zero and place the camera on +Z for the correct front.
+         */
+        model.rotation.set(0, 0, 0);
+        model.updateMatrixWorld(true);
+
+        model.traverse(object => {
+          if (!object.isMesh) return;
+
+          object.frustumCulled = false;
+
+          const materials = Array.isArray(object.material)
+            ? object.material
+            : [object.material];
+
+          object.material = materials.map(material => {
+            const silver = material && material.clone
+              ? material.clone()
+              : new THREE.MeshStandardMaterial();
+
+            silver.color = new THREE.Color(0xd7dbe0);
+            silver.metalness = 0.92;
+            silver.roughness = 0.16;
+            silver.side = THREE.DoubleSide;
+            silver.envMapIntensity = 1.5;
+            silver.needsUpdate = true;
+            return silver;
+          });
+
+          if (object.material.length === 1) {
+            object.material = object.material[0];
+          }
+        });
+
+        const sourceBox = new THREE.Box3().setFromObject(model);
+        const sourceCenter = sourceBox.getCenter(new THREE.Vector3());
+        const sourceSize = sourceBox.getSize(new THREE.Vector3());
+
+        model.position.sub(sourceCenter);
+
+        charmModelRoot = new THREE.Group();
+        charmModelRoot.rotation.set(0, 0, 0);
+        charmModelRoot.add(model);
+
+        const largestDimension = Math.max(sourceSize.x, sourceSize.y, sourceSize.z) || 1;
+        charmModelRoot.scale.setScalar(2.25 / largestDimension);
+        charmScene.add(charmModelRoot);
+        charmModelRoot.updateMatrixWorld(true);
+
+        charmModelBounds = new THREE.Box3().setFromObject(charmModelRoot);
+
+        fitCharmCamera(true);
+        updateCharmLogoPlane();
+        setCharmLoading('', false);
+        setCharmStatus('Drag to rotate. Scroll to zoom.');
+      },
+      progress => {
+        if (!progress.total) return;
+        const percent = Math.min(100, Math.round(progress.loaded / progress.total * 100));
+        setCharmLoading('Loading 3D charm… ' + percent + '%', true);
+      },
+      error => {
+        console.error('Charm GLB load error:', error);
+        setCharmLoading('The 3D charm could not be loaded.', true);
+        setCharmStatus('Please refresh the page and try again.', true);
+      }
+    );
+
+    if (charmResizeObserver) charmResizeObserver.disconnect();
+    charmResizeObserver = new ResizeObserver(() => {
+      resizeCharmRenderer();
+      if (!charmUserMovedCamera) fitCharmCamera(false);
+    });
+    charmResizeObserver.observe(mount);
+
+    animateCharmViewer();
+  } catch (error) {
+    console.error('Charm viewer setup error:', error);
+    setCharmLoading('The 3D preview could not start.', true);
+    setCharmStatus('A required 3D library could not be loaded.', true);
+  }
+}
+
+function resizeCharmRenderer() {
+  const mount = document.getElementById('charm-3d-mount');
+  if (!mount || !charmRenderer || !charmCamera) return;
+
+  const width = Math.max(1, mount.clientWidth);
+  const height = Math.max(1, mount.clientHeight);
+
+  charmRenderer.setSize(width, height, false);
+  charmCamera.aspect = width / height;
+  charmCamera.updateProjectionMatrix();
+}
+
+function fitCharmCamera(resetUserView = false) {
+  if (!charmCamera || !charmControls || !charmModelBounds) return;
+
+  const THREE = window.THREE;
+  const box = charmModelBounds.clone();
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+
+  const verticalFov = THREE.MathUtils.degToRad(charmCamera.fov);
+  const fitHeightDistance = size.y / (2 * Math.tan(verticalFov / 2));
+  const fitWidthDistance = size.x / (2 * Math.tan(verticalFov / 2) * charmCamera.aspect);
+  const distance = Math.max(fitHeightDistance, fitWidthDistance) * 1.32;
+
+  charmCamera.near = Math.max(0.001, distance / 100);
+  charmCamera.far = Math.max(20, distance * 100);
+  charmCamera.position.set(center.x, center.y, box.max.z + distance);
+  charmCamera.lookAt(center);
+  charmCamera.updateProjectionMatrix();
+
+  charmControls.target.copy(center);
+  charmControls.minDistance = distance * 0.6;
+  charmControls.maxDistance = distance * 3.2;
+  charmControls.update();
+
+  if (resetUserView) charmUserMovedCamera = false;
+}
+
+function animateCharmViewer() {
+  if (charmAnimationFrame) cancelAnimationFrame(charmAnimationFrame);
+
+  const frame = () => {
+    charmAnimationFrame = requestAnimationFrame(frame);
+    if (!charmRenderer || !charmScene || !charmCamera) return;
+    if (charmControls) charmControls.update();
+    if (ST.step === 2) charmRenderer.render(charmScene, charmCamera);
+  };
+
+  frame();
+}
+
+function handleCharmDrop(event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const zone = document.getElementById('charm-upload-zone');
+  if (zone) zone.style.borderColor = '';
+
+  const file = event.dataTransfer && event.dataTransfer.files
+    ? event.dataTransfer.files[0]
+    : null;
+
+  if (file) setCharmLogoFile(file);
+}
+
+function setCharmLogoFile(file) {
+  setCharmStatus('');
+
+  if (!file.type || !/^image\/(png|jpeg|webp|svg\+xml)$/i.test(file.type)) {
+    setCharmStatus('Please upload a PNG, JPG, SVG, or WebP image.', true);
+    return;
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    setCharmStatus('File is over 10MB. Please upload a smaller image.', true);
+    return;
+  }
+
+  ST.charmFile = file;
+  ST.charmSkipped = false;
+
+  document.getElementById('charm-chip-name').textContent = file.name;
+  document.getElementById('charm-chip').style.display = 'flex';
+  document.getElementById('charm-upload-zone').style.display = 'none';
+
+  const reader = new FileReader();
+
+  reader.onerror = () => {
+    setCharmStatus('Could not read that image. Please try another file.', true);
+  };
+
+  reader.onload = event => {
+    const image = new Image();
+
+    image.onload = () => {
+      charmLogoImage = image;
+      updateCharmLogoPlane();
+      setCharmStatus('Logo preview added. Your original file will be sent with the order.');
+    };
+
+    image.onerror = () => {
+      setCharmStatus('Could not render that image. Try PNG or JPG.', true);
+    };
+
+    image.src = event.target.result;
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function createCharmLogoTexture(image) {
+  const THREE = window.THREE;
+  const textureCanvas = document.createElement('canvas');
+  const maxSide = 1024;
+  const ratio = image.width / image.height || 1;
+
+  if (ratio >= 1) {
+    textureCanvas.width = maxSide;
+    textureCanvas.height = Math.max(1, Math.round(maxSide / ratio));
+  } else {
+    textureCanvas.height = maxSide;
+    textureCanvas.width = Math.max(1, Math.round(maxSide * ratio));
+  }
+
+  const context = textureCanvas.getContext('2d', { willReadFrequently: true });
+  context.clearRect(0, 0, textureCanvas.width, textureCanvas.height);
+  context.drawImage(image, 0, 0, textureCanvas.width, textureCanvas.height);
+
+  const imageData = context.getImageData(
+    0,
+    0,
+    textureCanvas.width,
+    textureCanvas.height
+  );
+
+  const pixels = imageData.data;
+  const width = textureCanvas.width;
+  const height = textureCanvas.height;
+
+  /*
+   * JPG files have no alpha channel, so the old implementation made the
+   * complete rectangular image dark. Estimate the background from the image
+   * border, then convert only pixels that differ from that background into
+   * the engraved artwork mask. Transparent PNG/WebP/SVG artwork keeps its
+   * existing alpha channel.
+   */
+  let bgR = 0;
+  let bgG = 0;
+  let bgB = 0;
+  let sampleCount = 0;
+  const sampleStep = Math.max(1, Math.floor(Math.min(width, height) / 80));
+
+  function samplePixel(x, y) {
+    const index = (y * width + x) * 4;
+    bgR += pixels[index];
+    bgG += pixels[index + 1];
+    bgB += pixels[index + 2];
+    sampleCount += 1;
+  }
+
+  for (let x = 0; x < width; x += sampleStep) {
+    samplePixel(x, 0);
+    samplePixel(x, height - 1);
+  }
+
+  for (let y = sampleStep; y < height - sampleStep; y += sampleStep) {
+    samplePixel(0, y);
+    samplePixel(width - 1, y);
+  }
+
+  bgR /= Math.max(1, sampleCount);
+  bgG /= Math.max(1, sampleCount);
+  bgB /= Math.max(1, sampleCount);
+
+  let hasUsefulTransparency = false;
+
+  for (let index = 3; index < pixels.length; index += 4) {
+    if (pixels[index] < 245) {
+      hasUsefulTransparency = true;
+      break;
+    }
+  }
+
+  const engravingR = 42;
+  const engravingG = 49;
+  const engravingB = 56;
+
+  for (let index = 0; index < pixels.length; index += 4) {
+    const sourceR = pixels[index];
+    const sourceG = pixels[index + 1];
+    const sourceB = pixels[index + 2];
+    const sourceAlpha = pixels[index + 3] / 255;
+
+    let maskAlpha;
+
+    if (hasUsefulTransparency) {
+      maskAlpha = sourceAlpha;
+    } else {
+      const redDifference = sourceR - bgR;
+      const greenDifference = sourceG - bgG;
+      const blueDifference = sourceB - bgB;
+      const backgroundDistance = Math.sqrt(
+        redDifference * redDifference +
+        greenDifference * greenDifference +
+        blueDifference * blueDifference
+      );
+
+      /* Remove background noise/JPG compression and soften antialiased edges. */
+      maskAlpha = Math.max(0, Math.min(1, (backgroundDistance - 14) / 88));
+    }
+
+    /* Remove nearly invisible pixels so no rectangular haze remains. */
+    if (maskAlpha < 0.025) {
+      maskAlpha = 0;
+    }
+
+    pixels[index] = engravingR;
+    pixels[index + 1] = engravingG;
+    pixels[index + 2] = engravingB;
+    pixels[index + 3] = Math.round(maskAlpha * 220);
+  }
+
+  context.putImageData(imageData, 0, 0);
+
+  const texture = new THREE.CanvasTexture(textureCanvas);
+
+  if ('colorSpace' in texture && THREE.SRGBColorSpace) {
+    texture.colorSpace = THREE.SRGBColorSpace;
+  } else if (THREE.sRGBEncoding) {
+    texture.encoding = THREE.sRGBEncoding;
+  }
+
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.generateMipmaps = false;
+  texture.premultiplyAlpha = false;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function updateCharmLogoPlane() {
+  if (!charmScene || !charmModelBounds || !charmLogoImage) return;
+
+  const THREE = window.THREE;
+
+  if (charmLogoPlane) {
+    charmScene.remove(charmLogoPlane);
+    if (charmLogoPlane.geometry) charmLogoPlane.geometry.dispose();
+    if (charmLogoPlane.material) {
+      if (charmLogoPlane.material.map) charmLogoPlane.material.map.dispose();
+      charmLogoPlane.material.dispose();
+    }
+    charmLogoPlane = null;
+  }
+
+  const box = charmModelBounds;
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  const logoScaleInput = document.getElementById('charm-size');
+  const logoScale = logoScaleInput ? parseInt(logoScaleInput.value, 10) / 100 : 0.82;
+  const aspect = charmLogoImage.width / charmLogoImage.height || 1;
+  const maximumDimension = Math.min(size.x, size.y) * 0.34 * logoScale;
+
+  let planeWidth;
+  let planeHeight;
+
+  if (aspect >= 1) {
+    planeWidth = maximumDimension;
+    planeHeight = maximumDimension / aspect;
+  } else {
+    planeHeight = maximumDimension;
+    planeWidth = maximumDimension * aspect;
+  }
+
+  const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+  const material = new THREE.MeshBasicMaterial({
+    map: createCharmLogoTexture(charmLogoImage),
+    transparent: true,
+    opacity: 1,
+    alphaTest: 0.02,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    toneMapped: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -4,
+    polygonOffsetUnits: -4
+  });
+
+  charmLogoPlane = new THREE.Mesh(geometry, material);
+
+  /* The flat engraving face is in the lower-right section of this charm. */
+  charmLogoPlane.position.set(
+    center.x + size.x * 0.16,
+    center.y - size.y * 0.19,
+    box.max.z + Math.max(size.z * 0.025, 0.004)
+  );
+  charmLogoPlane.rotation.set(0, 0, 0);
+  charmLogoPlane.renderOrder = 20;
+  charmScene.add(charmLogoPlane);
 }
 
 function redrawCharm() {
-  applyLogoToCharm();
+  updateCharmLogoPlane();
 }
 
 function removeCharmLogo() {
-  charmLogoImg = null; ST.charmFile = null;
-  document.getElementById('charm-file').value = '';
+  charmLogoImage = null;
+  ST.charmFile = null;
+
+  const fileInput = document.getElementById('charm-file');
+  if (fileInput) fileInput.value = '';
+
   document.getElementById('charm-chip').style.display = 'none';
   document.getElementById('charm-upload-zone').style.display = '';
-  // Reset to plain silver
-  if (charmMesh) {
-    if (charmLogoTex) { charmLogoTex.dispose(); charmLogoTex = null; }
-    charmMesh.material = new THREE.MeshStandardMaterial({
-      color: 0xc8cdd4, metalness: 0.92, roughness: 0.12, envMapIntensity: 1.2
-    });
+  setCharmStatus('');
+
+  if (charmLogoPlane && charmScene) {
+    charmScene.remove(charmLogoPlane);
+    if (charmLogoPlane.geometry) charmLogoPlane.geometry.dispose();
+    if (charmLogoPlane.material) {
+      if (charmLogoPlane.material.map) charmLogoPlane.material.map.dispose();
+      charmLogoPlane.material.dispose();
+    }
+    charmLogoPlane = null;
   }
-  drawCharmHint();
 }
 
 // ── PACKAGE DESIGNER ──────────────────────────────────────────────────────────
-const PKG_MASK_URL  = 'https://cdn.shopify.com/s/files/1/0996/1022/files/mask_image.png?v=1783686292';
+const PKG_MASK_URL  = 'https://cdn.shopify.com/s/files/1/0996/1022/files/mask_image.png?v=1783686559';
 const PKG_BRAND_URL = '';
-const PKG_BACK_URL  = 'https://cdn.shopify.com/s/files/1/0996/1022/files/back_image.png?v=1783686292';
+const PKG_BACK_URL  = 'https://cdn.shopify.com/s/files/1/0996/1022/files/back_image.png?v=178365555';
 const PKG_W=969, PKG_H=1000;
 const PKG_WIN = { x:0, y:0, w:100, h:37 };
-let pkgFabric, pkgUserImg, pkgMaskImg, pkgBrandImg, pkgFlipped=false;
+let pkgFabric, pkgUserImg, pkgTemplateBase, pkgMaskImg, pkgBrandImg, pkgGuideRect, pkgFlipped=false;
+const PKG_ART_OPACITY = 0.78;
+const PKG_MASK_OVERLAY_OPACITY = 0.32;
 
 function initPkg() {
   const cv = document.getElementById('pkg-canvas');
@@ -1266,41 +1803,200 @@ function initPkg() {
 
 function initFabricPkg() {
   const cv = document.getElementById('pkg-canvas');
-  pkgFabric = new fabric.Canvas(cv, { selection:false, preserveObjectStacking:true, backgroundColor:'#ffffff' });
-  pkgFabric.setDimensions({ width:cv.style.width, height:cv.style.height }, { cssOnly:true });
-  const win = { left:PKG_W*PKG_WIN.x/100, top:PKG_H*PKG_WIN.y/100, width:PKG_W*PKG_WIN.w/100, height:PKG_H*PKG_WIN.h/100 };
+
+  pkgFabric = new fabric.Canvas(cv, {
+    selection: false,
+    preserveObjectStacking: true,
+    backgroundColor: '#ffffff'
+  });
+
+  pkgFabric.setDimensions(
+    { width: cv.style.width, height: cv.style.height },
+    { cssOnly: true }
+  );
+
+  const win = {
+    left: PKG_W * PKG_WIN.x / 100,
+    top: PKG_H * PKG_WIN.y / 100,
+    width: PKG_W * PKG_WIN.w / 100,
+    height: PKG_H * PKG_WIN.h / 100
+  };
+
   window._pkgWin = win;
-  pkgFabric.add(new fabric.Rect({ left:win.left,top:win.top,width:win.width,height:win.height, fill:'rgba(0,0,0,0)', stroke:'rgba(0,100,190,0.4)', strokeDashArray:[12,6], strokeWidth:2, selectable:false, evented:false, excludeFromExport:true }));
+
+  pkgGuideRect = new fabric.Rect({
+    left: win.left,
+    top: win.top,
+    width: win.width,
+    height: win.height,
+    fill: 'rgba(0,0,0,0)',
+    stroke: 'rgba(0,100,190,0.40)',
+    strokeDashArray: [12, 6],
+    strokeWidth: 2,
+    selectable: false,
+    evented: false,
+    excludeFromExport: true
+  });
+
+  pkgFabric.add(pkgGuideRect);
+
   function loadOverlay(url, cb) {
-    if (!url) { cb(null); return; }
-    fabric.Image.fromURL(url, img => { img.set({left:0,top:0,selectable:false,evented:false,hoverCursor:'default'}); img.scaleToWidth(PKG_W); cb(img); }, { crossOrigin:'anonymous' });
+    if (!url) {
+      cb(null);
+      return;
+    }
+
+    fabric.Image.fromURL(
+      url,
+      img => {
+        img.set({
+          left: 0,
+          top: 0,
+          selectable: false,
+          evented: false,
+          hoverCursor: 'default',
+          objectCaching: false
+        });
+
+        img.scaleToWidth(PKG_W);
+        cb(img);
+      },
+      { crossOrigin: 'anonymous' }
+    );
   }
-  loadOverlay(PKG_MASK_URL, m => { if(m){pkgMaskImg=m;pkgFabric.add(m);} loadOverlay(PKG_BRAND_URL, b => { if(b){pkgBrandImg=b;pkgFabric.add(b);} pkgRestack(); }); });
+
+  /*
+   * Load the package template twice:
+   * 1. Full-strength base template.
+   * 2. Light overlay above the uploaded artwork.
+   *
+   * This keeps the original package design visible while allowing the
+   * uploaded graphic to show partially through the editable window.
+   */
+  loadOverlay(PKG_MASK_URL, base => {
+    if (base) {
+      pkgTemplateBase = base;
+      pkgTemplateBase.set({ opacity: 1 });
+      pkgFabric.add(pkgTemplateBase);
+    }
+
+    loadOverlay(PKG_MASK_URL, overlay => {
+      if (overlay) {
+        pkgMaskImg = overlay;
+        pkgMaskImg.set({ opacity: PKG_MASK_OVERLAY_OPACITY });
+        pkgFabric.add(pkgMaskImg);
+      }
+
+      loadOverlay(PKG_BRAND_URL, brand => {
+        if (brand) {
+          pkgBrandImg = brand;
+          pkgFabric.add(pkgBrandImg);
+        }
+
+        pkgRestack();
+      });
+    });
+  });
 }
 
 function addPkgImage(dataUrl) {
-  if (!pkgFabric) return;
+  if (!pkgFabric || !window._pkgWin) return;
+
   const win = window._pkgWin;
+
   fabric.Image.fromURL(dataUrl, img => {
-    if (pkgUserImg) pkgFabric.remove(pkgUserImg);
+    if (!img || !img.width || !img.height) {
+      document.getElementById('pkg-status').textContent =
+        'The selected image could not be previewed. Please try another PNG, JPG, or WebP file.';
+      return;
+    }
+
+    if (pkgUserImg) {
+      pkgFabric.remove(pkgUserImg);
+    }
+
     pkgUserImg = img;
-    img.clipPath = new fabric.Rect({ left:win.left,top:win.top,width:win.width,height:win.height,absolutePositioned:true });
-    const cover = Math.max(win.width/img.width, win.height/img.height);
-    img.scale(cover);
-    img.set({ left:win.left+win.width/2, top:win.top+win.height/2, originX:'center', originY:'center', cornerColor:'#0057B8', borderColor:'#0057B8', cornerSize:12, transparentCorners:false });
-    img._baseScale = cover;
-    pkgFabric.add(img); pkgRestack(); pkgFabric.setActiveObject(img);
+
+    pkgUserImg.clipPath = new fabric.Rect({
+      left: win.left,
+      top: win.top,
+      width: win.width,
+      height: win.height,
+      absolutePositioned: true
+    });
+
+    // const cover = Math.max(
+    //   win.width / pkgUserImg.width,
+    //   win.height / pkgUserImg.height
+    // );
+
+    const contain = Math.min(
+      win.width / pkgUserImg.width,
+      win.height / pkgUserImg.height
+    );
+
+    // pkgUserImg.scale(cover);
+    pkgUserImg.scale(contain);
+
+    pkgUserImg.set({
+      left: win.left + win.width / 2,
+      top: win.top + win.height / 2,
+      originX: 'center',
+      originY: 'center',
+      opacity: PKG_ART_OPACITY,
+      cornerColor: '#0057B8',
+      borderColor: '#0057B8',
+      cornerSize: 12,
+      transparentCorners: false,
+      lockRotation: false,
+      objectCaching: false
+    });
+
+    // pkgUserImg._baseScale = cover;
+    pkgUserImg._baseScale = contain;
+    pkgUserImg.setCoords();
+
+    pkgFabric.add(pkgUserImg);
+    pkgRestack();
+    pkgFabric.setActiveObject(pkgUserImg);
+    pkgFabric.requestRenderAll();
+
     document.getElementById('pkg-scale').value = 100;
     document.getElementById('pkg-scale-val').textContent = '100%';
-    document.getElementById('pkg-status').textContent = 'Graphic added — drag to reposition.';
+    document.getElementById('pkg-status').textContent =
+      'Graphic added — drag to reposition. The package mask remains layered above it.';
   });
 }
 
 function pkgRestack() {
   if (!pkgFabric) return;
-  if (pkgUserImg) pkgFabric.sendToBack(pkgUserImg);
-  if (pkgMaskImg) pkgMaskImg.bringToFront();
-  if (pkgBrandImg) pkgBrandImg.bringToFront();
+
+  let layerIndex = 0;
+
+  /* Original package template at the bottom. */
+  if (pkgTemplateBase) {
+    pkgFabric.moveTo(pkgTemplateBase, layerIndex++);
+  }
+
+  /* Uploaded artwork above the base template. */
+  if (pkgUserImg) {
+    pkgFabric.moveTo(pkgUserImg, layerIndex++);
+  }
+
+  /* Light copy of the mask remains above the uploaded artwork. */
+  if (pkgMaskImg) {
+    pkgFabric.moveTo(pkgMaskImg, layerIndex++);
+  }
+
+  if (pkgBrandImg) {
+    pkgFabric.moveTo(pkgBrandImg, layerIndex++);
+  }
+
+  /* Keep the editable-window guide visible while the customer is editing. */
+  if (pkgGuideRect) {
+    pkgFabric.moveTo(pkgGuideRect, layerIndex++);
+  }
+
   pkgFabric.requestRenderAll();
 }
 
@@ -1334,9 +2030,26 @@ function flipPkg() {
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
+function bootOceanGiftingFlow() {
+  const root = document.getElementById('ocean-gifting-flow');
+  if (!root || root.dataset.flowReady === '1') return;
+  root.dataset.flowReady = '1';
+  initBraceletMessaging();
   initPkg();
-});
+
+  const checkoutButton = document.getElementById('checkout-final-btn');
+  if (checkoutButton && checkoutButton.dataset.checkoutBound !== '1') {
+    checkoutButton.dataset.checkoutBound = '1';
+    checkoutButton.addEventListener('click', handleAddToCart);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootOceanGiftingFlow, { once: true });
+} else {
+  bootOceanGiftingFlow();
+}
 </script>
+</div>
 </body>
 </html>
