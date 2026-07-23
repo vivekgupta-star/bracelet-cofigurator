@@ -1138,7 +1138,7 @@ loader.load('https://cdn.shopify.com/3d/models/06cde034be5cc3d2/tex_charm.glb?v=
   disc.rotation.x = Math.PI / 2;
   disc.castShadow = true;
   disc.receiveShadow = true;
- // engravingCharm.add(disc);
+  engravingCharm.add(disc);
 
   const faceInset = new THREE.Mesh(
     new THREE.RingGeometry(0.054, 0.060, 64),
@@ -1153,25 +1153,41 @@ loader.load('https://cdn.shopify.com/3d/models/06cde034be5cc3d2/tex_charm.glb?v=
   faceInset.castShadow = true;
   engravingCharm.add(faceInset);
 
+  // Loop built into the top of the engraving disc.
   const topLoop = new THREE.Mesh(
     new THREE.TorusGeometry(0.026, 0.007, 18, 56),
     matEngravingCharm
   );
-  topLoop.position.y = 0.090;
+  topLoop.position.set(0, 0.090, 0);
   topLoop.castShadow = true;
   engravingCharm.add(topLoop);
 
+  // First jump ring: rotate it perpendicular to the disc loop so the
+  // two rings visibly interlock instead of looking like separate circles.
   const connector = new THREE.Mesh(
-    new THREE.TorusGeometry(0.019, 0.0055, 16, 48),
+    new THREE.TorusGeometry(0.022, 0.006, 18, 56),
     matEngravingCharm
   );
-  connector.position.set(-0.010, 0.121, 0);
-  connector.rotation.z = 0.32;
+  connector.position.set(0, 0.125, 0.004);
+  connector.rotation.set(Math.PI / 2, 0.12, 0.28);
   connector.castShadow = true;
   engravingCharm.add(connector);
 
-  engravingCharm.position.set(0.735, -0.275, 0.085);
-  engravingCharm.rotation.set(0.05, -0.12, -0.10);
+  // Second jump ring reaches the bracelet attachment point and makes the
+  // engraving charm look physically connected to the bracelet.
+  const attachmentRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.025, 0.006, 18, 56),
+    matEngravingCharm
+  );
+  attachmentRing.position.set(0.004, 0.157, 0.010);
+  attachmentRing.rotation.set(0.16, Math.PI / 2, -0.10);
+  attachmentRing.castShadow = true;
+  engravingCharm.add(attachmentRing);
+
+  // Move the secondary charm slightly closer and higher so the upper ring
+  // overlaps the bracelet attachment area rather than appearing to float.
+  engravingCharm.position.set(0.705, -0.245, 0.065);
+  engravingCharm.rotation.set(0.04, -0.10, -0.14);
   scene.add(engravingCharm);
 
   onPartLoaded();
